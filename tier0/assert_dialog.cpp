@@ -512,39 +512,26 @@ DBG_INTERFACE bool DoNewAssertDialog( const tchar *pFilename, int line, const tc
 		}
 	}
 
-#elif defined( _WIN32 )
-
-	if ( !ThreadInMainThread() )
-	{
-		int result = MessageBox( NULL,  pExpression, "Assertion Failed", MB_SYSTEMMODAL | MB_CANCELTRYCONTINUE );
-
-		if ( result == IDCANCEL )
-		{
-			IgnoreAssertsNearby( 0 );
-		}
-		else if ( result == IDCONTINUE )
-		{
-			g_bBreak = true;
-		}
-	}
-	else
-	{
-		HWND hParentWindow = FindLikelyParentWindow();
-
-		DialogBox( g_hTier0Instance, MAKEINTRESOURCE( IDD_ASSERT_DIALOG ), hParentWindow, AssertDialogProc );
-	}
-
-#elif defined( POSIX ) && defined ( USE_SDL )
+#elif defined ( USE_SDL )
 	static FUNC_SDL_ShowMessageBox *pfnSDLShowMessageBox = NULL;
 	if( !pfnSDLShowMessageBox )
 	{
+#ifdef POSIX
 #ifdef OSX
 		void *ret = dlopen( "libSDL2-2.0.0.dylib", RTLD_LAZY );
-#else
+#elif LINUX
 		void *ret = dlopen( "libSDL2-2.0.so.0", RTLD_LAZY );
 #endif
 		if ( ret )
-			{ pfnSDLShowMessageBox = ( FUNC_SDL_ShowMessageBox * )dlsym( ret, "SDL_ShowMessageBox" ); }
+		{
+			pfnSDLShowMessageBox = (FUNC_SDL_ShowMessageBox *)dlsym( ret, "SDL_ShowMessageBox" );
+		}
+#elif defined( _WIN32 )
+		HMODULE handle = LoadLibraryA( "SDL2.dll" );
+		if ( handle )
+			pfnSDLShowMessageBox = (FUNC_SDL_ShowMessageBox *)GetProcAddress( handle, "SDL_ShowMessageBox" );
+#endif
+
 	}
 
 	if( pfnSDLShowMessageBox )
@@ -604,6 +591,28 @@ DBG_INTERFACE bool DoNewAssertDialog( const tchar *pFilename, int line, const tc
 	{
 		// Couldn't SDL it up
 		g_bBreak = true;
+	}
+
+#elif defined( _WIN32 )
+
+	if ( !ThreadInMainThread() )
+	{
+		int result = MessageBox( NULL, pExpression, "Assertion Failed", MB_SYSTEMMODAL | MB_CANCELTRYCONTINUE );
+
+		if ( result == IDCANCEL )
+		{
+			IgnoreAssertsNearby( 0 );
+		}
+		else if ( result == IDCONTINUE )
+		{
+			g_bBreak = true;
+		}
+	}
+	else
+	{
+		HWND hParentWindow = FindLikelyParentWindow();
+
+		DialogBox( g_hTier0Instance, MAKEINTRESOURCE( IDD_ASSERT_DIALOG ), hParentWindow, AssertDialogProc );
 	}
 
 #else

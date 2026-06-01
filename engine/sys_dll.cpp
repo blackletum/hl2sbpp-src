@@ -335,15 +335,7 @@ void Sys_Printf(char *fmt, ...)
 
 bool Sys_MessageBox(const char *title, const char *info, bool bShowOkAndCancel)
 {
-#ifdef _WIN32
-
-	if ( IDOK == ::MessageBox( NULL, title, info, MB_ICONEXCLAMATION | ( bShowOkAndCancel ? MB_OKCANCEL : MB_OK ) ) )
-	{
-		return true;
-	}
-	return false;
-
-#elif defined( USE_SDL )
+#if defined( USE_SDL )
 
 	int buttonid = 0;
 	SDL_MessageBoxData messageboxdata = { 0 };
@@ -361,6 +353,14 @@ bool Sys_MessageBox(const char *title, const char *info, bool bShowOkAndCancel)
 
 	SDL_ShowMessageBox( &messageboxdata, &buttonid );
 	return ( buttonid == 1 );
+
+#elif defined( _WIN32 )
+
+	if ( IDOK == ::MessageBox( NULL, title, info, MB_ICONEXCLAMATION | ( bShowOkAndCancel ? MB_OKCANCEL : MB_OK ) ) )
+	{
+		return true;
+	}
+	return false;
 
 #elif defined( POSIX )
 
@@ -415,9 +415,7 @@ void Sys_Error_Internal( bool bMinidump, const char *error, va_list argsList )
 		!CommandLine()->FindParm( "-nomessagebox" ) &&
 		!CommandLine()->FindParm( "-nocrashdialog" ) )
 	{
-#ifdef _WIN32
-		::MessageBox( NULL, text, "Engine Error", MB_OK | MB_TOPMOST );
-#elif defined( USE_SDL )
+#if defined( USE_SDL )
 		Sys_MessageBox( "Engine Error", text, false );
 #endif
 	}

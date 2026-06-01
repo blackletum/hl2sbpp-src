@@ -111,7 +111,7 @@ public:
 	{
 		if ( ((size_t)&m_Head) % TSLIST_HEAD_ALIGNMENT != 0 )
 		{
-			Error( _T( "CTSListBase: Misaligned list\n" ) );
+			Warning( _T( "CTSListBase: Misaligned list\n" ) );
 			DebuggerBreak();
 		}
 
@@ -132,7 +132,7 @@ public:
 #ifdef _DEBUG
 		if ( (size_t)pNode % TSLIST_NODE_ALIGNMENT != 0 )
 		{
-			Error( _T( "CTSListBase: Misaligned node\n" ) );
+			Warning( _T( "CTSListBase: Misaligned node\n" ) );
 			DebuggerBreak();
 		}
 #endif

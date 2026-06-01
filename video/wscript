@@ -30,7 +30,7 @@ def build(bld):
 
 	defines = []
 
-	libs = ['tier0','tier1','tier2','tier3','vstdlib']
+	libs = ['appframework','tier0','tier1','tier2','tier3','vstdlib']
 
 	if bld.env.DEST_OS == 'win32':
 		libs += ['USER32']

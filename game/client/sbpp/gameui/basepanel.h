@@ -78,7 +78,7 @@ private:
 
 class CMainMenu : public vgui::Panel
 {
-	DECLARE_CLASS( CMainMenu, vgui::Panel );
+	DECLARE_CLASS_SIMPLE( CMainMenu, vgui::Panel );
 
 public:
 	CMainMenu( vgui::VPANEL parent );
@@ -99,8 +99,6 @@ private:
 
 class CMainMenuSystem : public CAutoGameSystem
 {
-	DECLARE_CLASS( CMainMenuSystem, CAutoGameSystem );
-
 public:
 	CMainMenuSystem();
 

@@ -188,8 +188,8 @@ public:
 	{
 		if ( ((size_t)&m_Head) % TSLIST_HEAD_ALIGNMENT != 0 )
 		{
-			Error( "CTSListBase: Misaligned list\n" );
-			DebuggerBreak();
+			Warning( "CTSListBase: Misaligned list\n" );
+			return;
 		}
 
 #ifdef USE_NATIVE_SLIST
@@ -211,8 +211,8 @@ public:
 #ifdef _DEBUG
 		if ( (size_t)pNode % TSLIST_NODE_ALIGNMENT != 0 )
 		{
-			Error( "CTSListBase: Misaligned node\n" );
-			DebuggerBreak();
+			Warning( "CTSListBase: Misaligned node\n" );
+			//return NULL;
 		}
 #endif
 
@@ -732,13 +732,13 @@ public:
 		COMPILE_TIME_ASSERT( sizeof(Node_t) >= sizeof(TSLNodeBase_t) );
 		if ( ((size_t)&m_Head) % TSLIST_HEAD_ALIGNMENT != 0 )
 		{
-			Error( "CTSQueue: Misaligned queue\n" );
-			DebuggerBreak();
+			Warning( "CTSQueue: Misaligned queue\n" );
+			return;
 		}
 		if ( ((size_t)&m_Tail) % TSLIST_HEAD_ALIGNMENT != 0 )
 		{
-			Error( "CTSQueue: Misaligned queue\n" );
-			DebuggerBreak();
+			Warning( "CTSQueue: Misaligned queue\n" );
+			return;
 		}
 		m_Count = 0;
 		m_Head.value.sequence = m_Tail.value.sequence = 0;
@@ -861,8 +861,8 @@ public:
 #ifdef _DEBUG
 		if ( (size_t)pNode % TSLIST_NODE_ALIGNMENT != 0 )
 		{
-			Error( "CTSListBase: Misaligned node\n" );
-			DebuggerBreak();
+			Warning( "CTSListBase: Misaligned node\n" );
+			//return NULL;
 		}
 #endif
 

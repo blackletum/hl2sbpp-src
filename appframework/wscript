@@ -49,6 +49,9 @@ def build(bld):
 	defines = []
 
 	libs = []
+	
+	if bld.env.SDL:
+		libs += ['SDL2']
 
 	if bld.env.DEST_OS == 'darwin':
 		libs += ['FOUNDATION', 'APPKIT', 'IOKIT']
