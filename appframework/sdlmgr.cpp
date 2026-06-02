@@ -533,6 +533,14 @@ InitReturnVal_t CSDLMgr::Init()
 #endif
 	}
 
+	// @PracticeMedicine: Audio subsystem is initialized in the SDL engine audio interface,
+	// but initialize the Audio subsystem early in case if it for some reason doesn't work.
+	if ( !SDL_WasInit( SDL_INIT_AUDIO ) )
+	{
+		if ( SDL_Init( SDL_INIT_AUDIO ) == -1 )
+			Warning( "SDL_Init(SDL_INIT_AUDIO) failed: %s", SDL_GetError() );
+	}
+
 	fprintf(stderr, "SDL video target is '%s'\n", SDL_GetCurrentVideoDriver());
 	Msg("SDL video target is '%s'\n", SDL_GetCurrentVideoDriver());
 
@@ -727,6 +735,7 @@ void CSDLMgr::Shutdown()
 	}
 
 	SDL_GL_UnloadLibrary();
+	SDL_QuitSubSystem(SDL_INIT_AUDIO);
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
