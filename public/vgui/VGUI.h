@@ -40,11 +40,11 @@ typedef unsigned int   uint;
 typedef unsigned long  ulong;
 
 #ifdef PLATFORM_64BITS
-typedef long long			intp;
-typedef unsigned long long	uintp;
+typedef __int64			 intp;	// intp is an integer that can accomodate a pointer
+typedef unsigned __int64 uintp; // (ie, sizeof(intp) >= sizeof(int) && sizeof(intp) >= sizeof(void *)
 #else
-typedef int					intp;
-typedef unsigned int		uintp;
+typedef __int32			 intp;
+typedef unsigned __int32 uintp;
 #endif
 
 #ifndef _WCHAR_T_DEFINED
