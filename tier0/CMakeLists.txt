@@ -106,7 +106,14 @@ target_include_directories(tier0
 		${SRC_DIR}/public
 		${SRC_DIR}/public/tier0
 		${SRC_DIR}/tier0
+		${SRC_DIR}/thirdparty
 )
+
+if (USE_SDL2)
+target_include_directories(tier0 PRIVATE
+	"${SRC_DIR}/thirdparty/SDL"
+)
+endif()
 
 target_compile_definitions(tier0
 	PRIVATE

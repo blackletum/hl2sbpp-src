@@ -94,7 +94,23 @@ endif()
 
 # global options start here
 
+if(WIN32)
+    set(USE_SDL2_DEFAULT ON)
+elseif(APPLE)
+    set(USE_SDL2_DEFAULT OFF)
+elseif(UNIX)
+    set(USE_SDL2_DEFAULT ON)
+else()
+    set(USE_SDL2_DEFAULT OFF)
+endif()
+
+option(USE_SDL2 "Makes use of SDL2 for the windowing and audio interface." ${USE_SDL2_DEFAULT})
+
 # end global options
+
+if (USE_SDL2)
+add_compile_definitions(USE_SDL=1)
+endif(USE_SDL2)
 
 if(WIN32)
     	message(STATUS "Building for Windows")

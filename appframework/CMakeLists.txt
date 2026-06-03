@@ -24,7 +24,7 @@ if(LINUX)
 	list(APPEND SOURCES "linuxapp.cpp")
 endif()
 
-if (SDL2_ENABLED)
+if (USE_SDL2)
 	list(APPEND SOURCES "sdlmgr.cpp")
 endif()
 
@@ -39,6 +39,7 @@ target_include_directories(appframework PRIVATE
 	"${SRC_DIR}/public/tier1"
 	"${SRC_DIR}/public/tier2"
 	"${SRC_DIR}/public/tier3"
+	"${SRC_DIR}/thirdparty"
 )
 
 target_link_libraries(appframework PRIVATE
@@ -48,3 +49,13 @@ target_link_libraries(appframework PRIVATE
 	tier3
 	vstdlib
 )
+
+if (USE_SDL2)
+target_include_directories(appframework PRIVATE
+	"${SRC_DIR}/thirdparty/SDL"
+)
+
+target_link_libraries(appframework PRIVATE
+	SDL2
+)
+endif()
