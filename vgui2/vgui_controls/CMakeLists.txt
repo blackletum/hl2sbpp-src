@@ -1,0 +1,195 @@
+project(vgui_controls)
+
+set(VGUI_CONTROLS_SOURCES
+	AnalogBar.cpp
+	AnimatingImagePanel.cpp
+	AnimationController.cpp
+	BitmapImagePanel.cpp
+	BuildFactoryHelper.cpp
+	BuildGroup.cpp
+	BuildModeDialog.cpp
+	Button.cpp
+	CheckButton.cpp
+	CheckButtonList.cpp
+	CircularProgressBar.cpp
+	ComboBox.cpp
+	consoledialog.cpp
+	ControllerMap.cpp
+	controls.cpp
+	cvartogglecheckbutton.cpp
+	DirectorySelectDialog.cpp
+	Divider.cpp
+	EditablePanel.cpp
+	ExpandButton.cpp
+	FileOpenDialog.cpp
+	FileOpenStateMachine.cpp
+	../../public/filesystem_helpers.cpp
+	FocusNavGroup.cpp
+	Frame.cpp
+	GraphPanel.cpp
+	HTML.cpp
+	Image.cpp
+	ImageList.cpp
+	ImagePanel.cpp
+	InputDialog.cpp
+	KeyBindingHelpDialog.cpp
+	KeyBoardEditorDialog.cpp
+	KeyRepeat.cpp
+	Label.cpp
+	ListPanel.cpp
+	ListViewPanel.cpp
+	Menu.cpp
+	MenuBar.cpp
+	MenuButton.cpp
+	MenuItem.cpp
+	MessageBox.cpp
+	MessageDialog.cpp
+	Panel.cpp
+	PanelListPanel.cpp
+	PerforceFileExplorer.cpp
+	PerforceFileList.cpp
+	perforcefilelistframe.cpp
+	ProgressBar.cpp
+	ProgressBox.cpp
+	PropertyDialog.cpp
+	PropertyPage.cpp
+	PropertySheet.cpp
+	QueryBox.cpp
+	RadioButton.cpp
+	RichText.cpp
+	RotatingProgressBar.cpp
+	savedocumentquery.cpp
+	ScalableImagePanel.cpp
+	ScrollableEditablePanel.cpp
+	ScrollBar.cpp
+	ScrollBarSlider.cpp
+	SectionedListPanel.cpp
+	Slider.cpp
+	Splitter.cpp
+	subrectimage.cpp
+	TextEntry.cpp
+	TextImage.cpp
+	ToggleButton.cpp
+	Tooltip.cpp
+	ToolWindow.cpp
+	TreeView.cpp
+	TreeViewListControl.cpp
+	URLLabel.cpp
+	WizardPanel.cpp
+	WizardSubPanel.cpp
+	../src/vgui_key_translation.cpp
+)
+
+set(VGUI_CONTROLS_HEADERS
+	${SRC_DIR}/public/vgui_controls/AnalogBar.h
+	${SRC_DIR}/public/vgui_controls/AnimatingImagePanel.h
+	${SRC_DIR}/public/vgui_controls/AnimationController.h
+	${SRC_DIR}/public/vgui_controls/BitmapImagePanel.h
+	${SRC_DIR}/public/vgui_controls/BuildGroup.h
+	${SRC_DIR}/public/vgui_controls/BuildModeDialog.h
+	${SRC_DIR}/public/vgui_controls/Button.h
+	${SRC_DIR}/public/vgui_controls/CheckButton.h
+	${SRC_DIR}/public/vgui_controls/CheckButtonList.h
+	${SRC_DIR}/public/vgui_controls/CircularProgressBar.h
+	${SRC_DIR}/public/Color.h
+	${SRC_DIR}/public/vgui_controls/ComboBox.h
+	${SRC_DIR}/public/vgui_controls/consoledialog.h
+	${SRC_DIR}/public/vgui_controls/ControllerMap.h
+	${SRC_DIR}/public/vgui_controls/Controls.h
+	${SRC_DIR}/public/vgui_controls/cvartogglecheckbutton.h
+	${SRC_DIR}/public/vgui_controls/DirectorySelectDialog.h
+	${SRC_DIR}/public/vgui_controls/Divider.h
+	${SRC_DIR}/public/vgui_controls/EditablePanel.h
+	${SRC_DIR}/public/vgui_controls/ExpandButton.h
+	${SRC_DIR}/public/vgui_controls/FileOpenDialog.h
+	${SRC_DIR}/public/vgui_controls/FileOpenStateMachine.h
+	${SRC_DIR}/public/filesystem.h
+	${SRC_DIR}/public/filesystem_helpers.h
+	${SRC_DIR}/public/vgui_controls/FocusNavGroup.h
+	${SRC_DIR}/public/vgui_controls/Frame.h
+	${SRC_DIR}/public/vgui_controls/GraphPanel.h
+	${SRC_DIR}/public/vgui_controls/HTML.h
+	${SRC_DIR}/public/vgui_controls/Image.h
+	${SRC_DIR}/public/vgui_controls/ImageList.h
+	${SRC_DIR}/public/vgui_controls/ImagePanel.h
+	${SRC_DIR}/public/vgui_controls/InputDialog.h
+	${SRC_DIR}/public/tier1/interface.h
+	${SRC_DIR}/public/vgui_controls/KeyBindingHelpDialog.h
+	${SRC_DIR}/public/vgui_controls/KeyBoardEditorDialog.h
+	${SRC_DIR}/public/vgui_controls/KeyRepeat.h
+	${SRC_DIR}/public/tier1/KeyValues.h
+	${SRC_DIR}/public/vgui_controls/Label.h
+	${SRC_DIR}/public/vgui_controls/ListPanel.h
+	${SRC_DIR}/public/vgui_controls/ListViewPanel.h
+	${SRC_DIR}/public/tier0/memdbgoff.h
+	${SRC_DIR}/public/tier0/memdbgon.h
+	${SRC_DIR}/public/tier1/mempool.h
+	${SRC_DIR}/public/vgui_controls/Menu.h
+	${SRC_DIR}/public/vgui_controls/MenuBar.h
+	${SRC_DIR}/public/vgui_controls/MenuButton.h
+	${SRC_DIR}/public/vgui_controls/MenuItem.h
+	${SRC_DIR}/public/vgui_controls/MessageBox.h
+	${SRC_DIR}/public/vgui_controls/MessageDialog.h
+	${SRC_DIR}/public/vgui_controls/Panel.h
+	${SRC_DIR}/public/vgui_controls/PanelListPanel.h
+	${SRC_DIR}/public/vgui_controls/pch_vgui_controls.h
+	${SRC_DIR}/public/vgui_controls/PerforceFileExplorer.h
+	${SRC_DIR}/public/vgui_controls/PerforceFileList.h
+	${SRC_DIR}/public/vgui_controls/perforcefilelistframe.h
+	${SRC_DIR}/public/vgui_controls/PHandle.h
+	${SRC_DIR}/public/vgui_controls/ProgressBar.h
+	${SRC_DIR}/public/vgui_controls/ProgressBox.h
+	${SRC_DIR}/public/vgui_controls/PropertyDialog.h
+	${SRC_DIR}/public/vgui_controls/PropertyPage.h
+	${SRC_DIR}/public/vgui_controls/PropertySheet.h
+	${SRC_DIR}/public/vgui_controls/QueryBox.h
+	${SRC_DIR}/public/vgui_controls/RadioButton.h
+	${SRC_DIR}/public/vgui_controls/RichText.h
+	${SRC_DIR}/public/vgui_controls/RotatingProgressBar.h
+	${SRC_DIR}/public/vgui_controls/savedocumentquery.h
+	${SRC_DIR}/public/vgui_controls/ScalableImagePanel.h
+	${SRC_DIR}/public/vgui_controls/ScrollableEditablePanel.h
+	${SRC_DIR}/public/vgui_controls/ScrollBar.h
+	${SRC_DIR}/public/vgui_controls/ScrollBarSlider.h
+	${SRC_DIR}/public/vgui_controls/SectionedListPanel.h
+	${SRC_DIR}/public/vgui_controls/Slider.h
+	${SRC_DIR}/public/vgui_controls/Splitter.h
+	${SRC_DIR}/public/vgui_controls/subrectimage.h
+	${SRC_DIR}/public/vgui_controls/TextEntry.h
+	${SRC_DIR}/public/vgui_controls/TextImage.h
+	${SRC_DIR}/public/vgui_controls/ToggleButton.h
+	${SRC_DIR}/public/vgui_controls/Tooltip.h
+	${SRC_DIR}/public/vgui_controls/ToolWindow.h
+	${SRC_DIR}/public/vgui_controls/TreeView.h
+	${SRC_DIR}/public/vgui_controls/TreeViewListControl.h
+	${SRC_DIR}/public/vgui_controls/URLLabel.h
+	${SRC_DIR}/public/tier1/utlmemory.h
+	${SRC_DIR}/public/tier1/utlrbtree.h
+	${SRC_DIR}/public/tier1/utlvector.h
+	${SRC_DIR}/public/vgui_controls/WizardPanel.h
+	${SRC_DIR}/public/vgui_controls/WizardSubPanel.h
+)
+
+source_group("Source Files" FILES ${VGUI_CONTROLS_SOURCES})
+source_group("Header Files" FILES ${VGUI_CONTROLS_HEADERS})
+
+add_public_library(vgui_controls ${VGUI_CONTROLS_SOURCES} ${VGUI_CONTROLS_HEADERS})
+
+target_include_directories(vgui_controls PRIVATE
+	${SRC_DIR}/public/tier0
+	${SRC_DIR}/public/tier1
+	${SRC_DIR}/public/vgui
+	${SRC_DIR}/public/vgui_controls
+)
+
+target_link_libraries(vgui_controls PRIVATE
+	tier0
+	tier1
+	vstdlib
+)
+
+if (WIN32)
+	target_link_libraries(vgui_controls PRIVATE
+		shell32
+	)
+endif(WIN32)
