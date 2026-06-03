@@ -553,7 +553,7 @@ static void VCR_SyncToken(char const *pToken)
 
 	if(g_VCRMode == VCR_Record)
 	{
-		int intLen = strlen( pToken );
+		size_t intLen = strlen( pToken );
 		assert( intLen <= 255 );
 
 		len = (unsigned char)intLen;
@@ -952,18 +952,18 @@ static void VCR_Hook_Cmd_Exec(char **f)
 	}
 	else if(g_VCRMode == VCR_Record)
 	{
-		int len;
+		size_t len;
 		char *str = *f;
 
 		if(str)
 		{
 			len = strlen(str)+1;
 			VCR_Write(&len, sizeof(len));
-			VCR_Write(str, len);
+			VCR_Write(str, static_cast<int>(len));
 		}
 		else
 		{
-			len = -1;
+			len = static_cast< size_t >( -1 );
 			VCR_Write(&len, sizeof(len));
 		}
 	}
@@ -984,14 +984,14 @@ static char* VCR_Hook_GetCommandLine()
 	VCR_THREADSAFE;
 	VCR_Event(VCREvent_CmdLine);
 
-	int len;
+	size_t len;
 	char *ret;
 
 	if(g_VCRMode == VCR_Playback)
 	{
 		VCR_Read(&len, sizeof(len));
 		ret = new char[len];
-		VCR_Read(ret, len);
+		VCR_Read(ret, static_cast<int>(len));
 	}
 	else
 	{
@@ -1001,7 +1001,7 @@ static char* VCR_Hook_GetCommandLine()
 		{
 			len = strlen(ret) + 1;
 			VCR_WriteVal(len);
-			VCR_Write(ret, len);
+			VCR_Write(ret, static_cast<int>(len));
 		}
 	}
 	
@@ -1311,7 +1311,7 @@ void VCR_GenericRecord( const char *pEventName, const void *pData, int len )
 		Error( "VCR_GenericRecord( %s ): not recording a VCR file", pEventName );
 
 	// Write the event name (or 255 if none).
-	int nameLen = 255;
+	size_t nameLen = 255;
 	if ( pEventName )
 	{
 		nameLen = strlen( pEventName ) + 1;
@@ -1435,7 +1435,7 @@ void VCR_GenericValueVerify( const tchar *pEventName, const void *pData, int max
 
 void WriteShortString( const char *pStr )
 {
-	int len = strlen( pStr ) + 1;
+	size_t len = strlen( pStr ) + 1;
 	if ( len >= 0xFFFF )
 	{
 		Error( "VCR_WriteShortString, string too long (%d characters).", len );
@@ -1443,13 +1443,13 @@ void WriteShortString( const char *pStr )
 
 	unsigned short twobytes = (unsigned short)len;
 	VCR_WriteVal( twobytes );
-	VCR_Write( pStr, len );
+	VCR_Write( pStr, static_cast<int>(len) );
 }
 
 
 void ReadAndVerifyShortString( const char *pStr )
 {
-	int len = strlen( pStr ) + 1;
+	size_t len = strlen( pStr ) + 1;
 
 	unsigned short incomingSize;
 	VCR_ReadVal( incomingSize );
@@ -1458,7 +1458,7 @@ void ReadAndVerifyShortString( const char *pStr )
 		VCR_Error( "ReadAndVerifyShortString (%s), lengths different.", pStr );
 
 	static char *pTempData = 0;
-	static int tempDataLen = 0;
+	static size_t tempDataLen = 0;
 	if ( tempDataLen < len )
 	{
 		delete [] pTempData;
@@ -1466,7 +1466,7 @@ void ReadAndVerifyShortString( const char *pStr )
 		tempDataLen = len;
 	}
 
-	VCR_Read( pTempData, len );
+	VCR_Read( pTempData, static_cast<int>(len) );
 	if ( memcmp( pTempData, pStr, len ) != 0 )
 	{
 		VCR_Error( "ReadAndVerifyShortString: strings different ('%s' vs '%s').", pStr, pTempData );

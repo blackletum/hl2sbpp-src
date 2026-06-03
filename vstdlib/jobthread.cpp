@@ -417,7 +417,7 @@ private:
 		{
 			if ( PeekCall() )
 			{
-				CFunctor *pFunctor = NULL;
+				//CFunctor *pFunctor = NULL;
 				tmZone( TELEMETRY_LEVEL0, TMZF_NONE, "%s PeekCall():%d", __FUNCTION__, GetCallParam() );
 
 				switch ( GetCallParam() )

@@ -1,0 +1,192 @@
+project(tier1)
+
+set(TIER1_SOURCES
+	${SRC_DIR}/utils/lzma/C/LzmaDec.c
+	bitbuf.cpp
+	byteswap.cpp
+	characterset.cpp
+	checksum_crc.cpp
+	checksum_md5.cpp
+	checksum_sha1.cpp
+	commandbuffer.cpp
+	convar.cpp
+	datamanager.cpp
+	diff.cpp
+	generichash.cpp
+	ilocalize.cpp
+	interface.cpp
+	KeyValues.cpp
+	keyvaluesjson.cpp
+	kvpacker.cpp
+	lzmaDecoder.cpp
+	lzss.cpp
+	mempool.cpp
+	memstack.cpp
+	NetAdr.cpp
+	newbitbuf.cpp
+	rangecheckedvar.cpp
+	reliabletimer.cpp
+	snappy.cpp
+	snappy-sinksource.cpp
+	snappy-stubs-internal.cpp
+	sparsematrix.cpp
+	splitstring.cpp
+	stringpool.cpp
+	strtools.cpp
+	strtools_unicode.cpp
+	tier1.cpp
+	tokenreader.cpp
+	uniqueid.cpp
+	utlbinaryblock.cpp
+	utlbuffer.cpp
+	utlbufferutil.cpp
+	utlstring.cpp
+	utlsymbol.cpp
+)
+
+set(TIER1_HEADERS
+	${SRC_DIR}/public/tier1/bitbuf.h
+	${SRC_DIR}/public/tier1/byteswap.h
+	${SRC_DIR}/public/tier1/callqueue.h
+	${SRC_DIR}/public/tier1/characterset.h
+	${SRC_DIR}/public/tier1/checksum_crc.h
+	${SRC_DIR}/public/tier1/checksum_md5.h
+	${SRC_DIR}/public/tier1/checksum_sha1.h
+	${SRC_DIR}/public/tier1/CommandBuffer.h
+	${SRC_DIR}/public/tier1/convar.h
+	${SRC_DIR}/public/tier1/convar_serverbounded.h
+	${SRC_DIR}/public/tier1/datamanager.h
+	${SRC_DIR}/public/datamap.h
+	${SRC_DIR}/public/tier1/delegates.h
+	${SRC_DIR}/public/tier1/diff.h
+	${SRC_DIR}/public/tier1/fileio.h
+	${SRC_DIR}/public/tier1/fmtstr.h
+	${SRC_DIR}/public/tier1/functors.h
+	${SRC_DIR}/public/tier1/generichash.h
+	${SRC_DIR}/public/tier1/iconvar.h
+	${SRC_DIR}/public/tier1/ilocalize.h
+	${SRC_DIR}/public/tier1/instancelog.h
+	${SRC_DIR}/public/tier1/interface.h
+	${SRC_DIR}/public/tier1/KeyValues.h
+	${SRC_DIR}/public/tier1/keyvaluesjson.h
+	${SRC_DIR}/public/tier1/kvpacker.h
+	${SRC_DIR}/public/tier1/lzmadecoder.h
+	${SRC_DIR}/public/tier1/lzss.h
+	${SRC_DIR}/public/tier1/memhelpers.h
+	${SRC_DIR}/public/tier1/mempool.h
+	${SRC_DIR}/public/tier1/memstack.h
+	${SRC_DIR}/public/tier1/netadr.h
+	${SRC_DIR}/public/tier1/passwordhash.h
+	${SRC_DIR}/public/tier1/processor_detect.h
+	${SRC_DIR}/public/tier1/rangecheckedvar.h
+	${SRC_DIR}/public/tier1/refcount.h
+	${SRC_DIR}/public/tier1/reliabletimer.h
+	${SRC_DIR}/public/tier1/smartptr.h
+	${SRC_DIR}/public/tier1/snappy.h
+	${SRC_DIR}/public/tier1/snappy-sinksource.h
+	${SRC_DIR}/public/tier1/snappy-stubs-public.h
+	${SRC_DIR}/public/tier1/sparsematrix.h
+	${SRC_DIR}/public/tier1/stringpool.h
+	${SRC_DIR}/public/tier1/strtools.h
+	${SRC_DIR}/public/tier1/thash.h
+	${SRC_DIR}/public/tier1/tier1.h
+	${SRC_DIR}/public/tier1/tokenreader.h
+	${SRC_DIR}/public/tier1/uniqueid.h
+	${SRC_DIR}/public/tier1/utlallocation.h
+	${SRC_DIR}/public/tier1/utlarray.h
+	${SRC_DIR}/public/tier1/utlbidirectionalset.h
+	${SRC_DIR}/public/tier1/utlbinaryblock.h
+	${SRC_DIR}/public/tier1/utlblockmemory.h
+	${SRC_DIR}/public/tier1/utlbuffer.h
+	${SRC_DIR}/public/tier1/utlbufferutil.h
+	${SRC_DIR}/public/tier1/utlcommon.h
+	${SRC_DIR}/public/tier1/utldelegate.h
+	${SRC_DIR}/public/tier1/utldelegateimpl.h
+	${SRC_DIR}/public/tier1/utldict.h
+	${SRC_DIR}/public/tier1/utlenvelope.h
+	${SRC_DIR}/public/tier1/utlfixedmemory.h
+	${SRC_DIR}/public/tier1/utlflags.h
+	${SRC_DIR}/public/tier1/utlhandletable.h
+	${SRC_DIR}/public/tier1/utlhash.h
+	${SRC_DIR}/public/tier1/utlhashdict.h
+	${SRC_DIR}/public/tier1/utlhashtable.h
+	${SRC_DIR}/public/tier1/utlintrusivelist.h
+	${SRC_DIR}/public/tier1/utllinkedlist.h
+	${SRC_DIR}/public/tier1/utlmap.h
+	${SRC_DIR}/public/tier1/utlmemory.h
+	${SRC_DIR}/public/tier1/utlmovingaverage.h
+	${SRC_DIR}/public/tier1/utlmultilist.h
+	${SRC_DIR}/public/tier1/utlntree.h
+	${SRC_DIR}/public/tier1/utlobjectreference.h
+	${SRC_DIR}/public/tier1/utlpair.h
+	${SRC_DIR}/public/tier1/utlpriorityqueue.h
+	${SRC_DIR}/public/tier1/utlqueue.h
+	${SRC_DIR}/public/tier1/utlrbtree.h
+	${SRC_DIR}/public/tier1/utlsoacontainer.h
+	${SRC_DIR}/public/tier1/UtlSortVector.h
+	${SRC_DIR}/public/tier1/utlstack.h
+	${SRC_DIR}/public/tier1/utlstring.h
+	${SRC_DIR}/public/tier1/UtlStringMap.h
+	${SRC_DIR}/public/tier1/utlsymbol.h
+	${SRC_DIR}/public/tier1/utlsymbollarge.h
+	${SRC_DIR}/public/tier1/utltshash.h
+	${SRC_DIR}/public/tier1/utlvector.h
+)
+
+if(WIN32)
+	list(APPEND TIER1_SOURCES
+		processor_detect.cpp
+	)
+elseif(UNIX AND NOT APPLE)
+	list(APPEND TIER1_SOURCES
+		processor_detect_linux.cpp
+		qsort_s.cpp
+	)
+endif()
+
+add_public_library(tier1
+	${TIER1_SOURCES}
+	${TIER1_HEADERS}
+)
+
+target_include_directories(tier1
+	PUBLIC
+		${SRC_DIR}/common
+		${SRC_DIR}/public
+		${SRC_DIR}/public/tier0
+		${SRC_DIR}/public/tier1
+		${SRC_DIR}/tier1
+)
+
+target_compile_definitions(tier1
+	PRIVATE
+		TIER1_STATIC_LIB
+)
+
+target_link_libraries(tier1
+	PRIVATE
+		tier0
+)
+
+if(MSVC)
+	set_source_files_properties(
+		processor_detect.cpp
+		PROPERTIES
+			COMPILE_OPTIONS "/EHsc"
+	)
+endif()
+
+if(WIN32)
+	target_link_libraries(tier1
+		PRIVATE
+			Rpcrt4
+	)
+elseif(UNIX AND APPLE)
+	target_link_libraries(tier1
+		PRIVATE
+			Iconv
+	)
+endif()
+
+source_group("Source Files" FILES ${TIER1_SOURCES})
+source_group("Header Files" FILES ${TIER1_HEADERS})

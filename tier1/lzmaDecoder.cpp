@@ -160,7 +160,7 @@ unsigned int CLZMA::Uncompress( unsigned char *pInput, unsigned char *pOutput )
 		return 0;
 	}
 
-	return outProcessed;
+	return static_cast< unsigned int >( outProcessed );
 }
 
 CLZMAStream::CLZMAStream()
@@ -285,8 +285,8 @@ bool CLZMAStream::Read( unsigned char *pInput, unsigned int nMaxInputBytes,
 		return false;
 	}
 
-	nCompressedBytesRead += inSize;
-	nOutputBytesWritten += outSize;
+	nCompressedBytesRead += static_cast< unsigned int >( inSize );
+	nOutputBytesWritten += static_cast< unsigned int >( outSize );
 
 	m_nCompressedBytesRead += nCompressedBytesRead;
 	m_nActualBytesRead += nOutputBytesWritten;

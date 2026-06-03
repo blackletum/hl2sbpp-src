@@ -294,20 +294,20 @@ CUtlSymbol CUtlSymbolTable::AddString( const char* pString )
 	if (id.IsValid())
 		return id;
 
-	int lenString = strlen(pString) + 1; // length of just the string
-	int lenDecorated = lenString + sizeof(hashDecoration_t); // and with its hash decoration
+	size_t lenString = strlen(pString) + 1; // length of just the string
+	size_t lenDecorated = lenString + sizeof(hashDecoration_t); // and with its hash decoration
 	// make sure that all strings are aligned on 2-byte boundaries so the hashes will read correctly
 	COMPILE_TIME_ASSERT(sizeof(hashDecoration_t) == 2);
 	lenDecorated = (lenDecorated + 1) & (~0x01); // round up to nearest multiple of 2
 
 	// Find a pool with space for this string, or allocate a new one.
-	int iPool = FindPoolWithSpace( lenDecorated );
+	int iPool = FindPoolWithSpace( static_cast< int >( lenDecorated ) );
 	if ( iPool == -1 )
 	{
 		// Add a new pool.
-		int newPoolSize = MAX( lenDecorated + sizeof( StringPool_t ), MIN_STRING_POOL_SIZE );
+		size_t newPoolSize = MAX( lenDecorated + sizeof( StringPool_t ), MIN_STRING_POOL_SIZE );
 		StringPool_t *pPool = (StringPool_t*)malloc( newPoolSize );
-		pPool->m_TotalLen = newPoolSize - sizeof( StringPool_t );
+		pPool->m_TotalLen = static_cast< int >( newPoolSize - sizeof( StringPool_t ) );
 		pPool->m_SpaceUsed = 0;
 		iPool = m_StringPools.AddToTail( pPool );
 	}
@@ -327,7 +327,7 @@ CUtlSymbol CUtlSymbolTable::AddString( const char* pString )
 	*((hashDecoration_t *)(startingAddr)) = hash;
 	// and then the string's data
 	memcpy( (void *)(startingAddr + sizeof(hashDecoration_t)), pString, lenString );
-	pPool->m_SpaceUsed += lenDecorated;
+	pPool->m_SpaceUsed += static_cast< int >( lenDecorated );
 
 	// insert the string into the vector.
 	CStringPoolIndex index;

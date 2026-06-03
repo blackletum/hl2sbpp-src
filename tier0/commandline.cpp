@@ -255,7 +255,7 @@ void CCommandLine::CreateCmdLine( const char *commandline )
 		{
 			if ( pSrc == commandline || (!bInQuotes && isspace( pSrc[-1] )) || (bInQuotes && pSrc == pInQuotesStart) )
 			{
-				LoadParametersFromFile( pSrc, pDst, sizeof( szFull ) - (pDst - szFull), bInQuotes );
+				LoadParametersFromFile( pSrc, pDst, static_cast<int>(sizeof( szFull ) - (pDst - szFull)), bInQuotes );
 				continue;
 			}
 		}	
@@ -269,7 +269,7 @@ void CCommandLine::CreateCmdLine( const char *commandline )
 
 	*pDst = '\0';
 
-	int len = strlen( szFull ) + 1;
+	size_t len = strlen( szFull ) + 1;
 	m_pszCmdLine = new char[len];
 	memcpy( m_pszCmdLine, szFull, len );
 
@@ -337,7 +337,7 @@ void CCommandLine::RemoveParm( const char *pszParm )
 	char *p, *found;
 	char *pnextparam;
 	int n;
-	int curlen;
+	size_t curlen;
 
 	p = m_pszCmdLine;
 	while ( *p )
@@ -373,7 +373,7 @@ void CCommandLine::RemoveParm( const char *pszParm )
 		if ( pnextparam && *pnextparam )
 		{
 			// We are either at the end of the string, or at the next param.  Just chop out the current param.
-			n = curlen - ( pnextparam - p ); // # of characters after this param.
+			n = static_cast<int>(curlen - ( pnextparam - p )); // # of characters after this param.
 			memmove( found, pnextparam, n );
 
 			found[n] = '\0';
@@ -389,7 +389,7 @@ void CCommandLine::RemoveParm( const char *pszParm )
 	// Strip and trailing ' ' characters left over.
 	while ( 1 )
 	{
-		int len = strlen( m_pszCmdLine );
+		size_t len = strlen( m_pszCmdLine );
 		if ( len == 0 || m_pszCmdLine[ len - 1 ] != ' ' )
 			break;
 		
@@ -407,7 +407,7 @@ void CCommandLine::RemoveParm( const char *pszParm )
 //-----------------------------------------------------------------------------
 void CCommandLine::AppendParm( const char *pszParm, const char *pszValues )
 {
-	int nNewLength = 0;
+	size_t nNewLength = 0;
 	char *pCmdString;
 
 	nNewLength = strlen( pszParm );            // Parameter.

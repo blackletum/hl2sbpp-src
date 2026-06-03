@@ -138,7 +138,7 @@ int _V_memcmp (const char* file, int line, const void *m1, const void *m2, int c
 int	_V_strlen(const char* file, int line, const char *str)
 {
 	AssertValidStringPtr(str);
-	return strlen( str );
+	return static_cast< int >( strlen( str ) );
 }
 
 void _V_strcpy (const char* file, int line, char *dest, const char *src)
@@ -151,7 +151,7 @@ void _V_strcpy (const char* file, int line, char *dest, const char *src)
 
 int	_V_wcslen(const char* file, int line, const wchar_t *pwch)
 {
-	return wcslen( pwch );
+	return static_cast< int >( wcslen( pwch ) );
 }
 
 char *_V_strrchr(const char* file, int line, const char *s, char c)
@@ -246,7 +246,7 @@ char *V_strlower( char *start )
 char *V_strnlwr(char *s, size_t count)
 {
 	// Assert( count >= 0 ); tautology since size_t is unsigned
-	AssertValidStringPtr( s, count );
+	AssertValidStringPtr( s, static_cast< int >( count ) );
 
 	char* pRet = s;
 	if ( !s || !count )
@@ -1454,7 +1454,7 @@ int _V_UnicodeToUCS2( const wchar_t *pUnicode, int cubSrcInBytes, char *pUCS2, i
 #ifdef _WIN32
 	// Figure out which buffer is smaller and convert from bytes to character
 	// counts.
-	int cchResult = min( (size_t)cubSrcInBytes/sizeof(wchar_t), cubDestSizeInBytes/sizeof(wchar_t) );
+	size_t cchResult = min( (size_t)cubSrcInBytes/sizeof(wchar_t), cubDestSizeInBytes/sizeof(wchar_t) );
 	wchar_t *pDest = (wchar_t*)pUCS2;
 	wcsncpy( pDest, pUnicode, cchResult );
 	// Make sure we NULL-terminate.
@@ -1478,7 +1478,7 @@ int _V_UnicodeToUCS2( const wchar_t *pUnicode, int cubSrcInBytes, char *pUCS2, i
 #else
 	#error Must be implemented for this platform
 #endif
-	return cchResult;	
+	return static_cast<int>(cchResult);	
 }
 
 
@@ -2396,7 +2396,7 @@ static bool CopyToMaxChars( char *pOut, int outSize, const char *pIn, int nChars
 //-----------------------------------------------------------------------------
 void V_FixupPathName( char *pOut, size_t nOutLen, const char *pPath )
 {
-	V_strncpy( pOut, pPath, nOutLen );
+	V_strncpy( pOut, pPath, static_cast< int >( nOutLen ) );
 	V_RemoveDotSlashes( pOut, CORRECT_PATH_SEPARATOR, true );
 #ifdef WIN32
 	V_strlower( pOut );
@@ -2415,8 +2415,8 @@ bool V_StrSubst(
 	bool bCaseSensitive
 	)
 {
-	int replaceFromLen = strlen( pMatch );
-	int replaceToLen = strlen( pReplaceWith );
+	size_t replaceFromLen = strlen( pMatch );
+	size_t replaceToLen = strlen( pReplaceWith );
 
 	const char *pInStart = pIn;
 	char *pOutPos = pOut;
@@ -2424,14 +2424,14 @@ bool V_StrSubst(
 
 	while ( 1 )
 	{
-		int nRemainingOut = outLen - (pOutPos - pOut);
+		size_t nRemainingOut = outLen - (pOutPos - pOut);
 
 		const char *pTestPos = ( bCaseSensitive ? strstr( pInStart, pMatch ) : V_stristr( pInStart, pMatch ) );
 		if ( pTestPos )
 		{
 			// Found an occurence of pMatch. First, copy whatever leads up to the string.
 			int copyLen = pTestPos - pInStart;
-			if ( !CopyToMaxChars( pOutPos, nRemainingOut, pInStart, copyLen ) )
+			if ( !CopyToMaxChars( pOutPos, static_cast<int>(nRemainingOut), pInStart, copyLen ) )
 				return false;
 			
 			// Did we hit the end of the output string?
@@ -2442,7 +2442,7 @@ bool V_StrSubst(
 			nRemainingOut = outLen - (pOutPos - pOut);
 
 			// Now add the replacement string.
-			if ( !CopyToMaxChars( pOutPos, nRemainingOut, pReplaceWith, replaceToLen ) )
+			if ( !CopyToMaxChars( pOutPos, static_cast< int >( nRemainingOut ), pReplaceWith, static_cast<int>(replaceToLen) ) )
 				return false;
 
 			pInStart += copyLen + replaceFromLen;
@@ -2451,8 +2451,8 @@ bool V_StrSubst(
 		else
 		{
 			// We're at the end of pIn. Copy whatever remains and get out.
-			int copyLen = strlen( pInStart );
-			V_strncpy( pOutPos, pInStart, nRemainingOut );
+			size_t copyLen = strlen( pInStart );
+			V_strncpy( pOutPos, pInStart, static_cast<int>(nRemainingOut) );
 			return ( copyLen <= nRemainingOut-1 );
 		}
 	}
@@ -2461,14 +2461,14 @@ bool V_StrSubst(
 
 char* AllocString( const char *pStr, int nMaxChars )
 {
-	int allocLen;
+	size_t allocLen;
 	if ( nMaxChars == -1 )
 		allocLen = strlen( pStr ) + 1;
 	else
 		allocLen = min( (int)strlen(pStr), nMaxChars ) + 1;
 
 	char *pOut = new char[allocLen];
-	V_strncpy( pOut, pStr, allocLen );
+	V_strncpy( pOut, pStr, static_cast<int>(allocLen) );
 	return pOut;
 }
 
@@ -2494,7 +2494,7 @@ void V_SplitString2( const char *pString, const char **pSeparators, int nSeparat
 		if ( pFirstSeparator )
 		{
 			// Split on this separator and continue on.
-			int separatorLen = strlen( pSeparators[iFirstSeparator] );
+			size_t separatorLen = strlen( pSeparators[iFirstSeparator] );
 			if ( pFirstSeparator > pCurPos )
 			{
 				outStrings.AddToTail( AllocString( pCurPos, pFirstSeparator-pCurPos ) );
@@ -2542,12 +2542,12 @@ void V_StrSlice( const char *pStr, int firstChar, int lastCharNonInclusive, char
 	if ( outSize == 0 )
 		return;
 	
-	int length = strlen( pStr );
+	size_t length = strlen( pStr );
 
 	// Fixup the string indices.
 	if ( firstChar < 0 )
 	{
-		firstChar = length - (-firstChar % length);
+		firstChar = static_cast< int >( length - ( -firstChar % length ) );
 	}
 	else if ( firstChar >= length )
 	{
@@ -2557,7 +2557,7 @@ void V_StrSlice( const char *pStr, int firstChar, int lastCharNonInclusive, char
 
 	if ( lastCharNonInclusive < 0 )
 	{
-		lastCharNonInclusive = length - (-lastCharNonInclusive % length);
+		lastCharNonInclusive = static_cast< int >( length - (-lastCharNonInclusive % length) );
 	}
 	else if ( lastCharNonInclusive > length )
 	{
@@ -2600,14 +2600,14 @@ void V_StrLeft( const char *pStr, int nChars, char *pOut, int outSize )
 
 void V_StrRight( const char *pStr, int nChars, char *pOut, int outSize )
 {
-	int len = strlen( pStr );
+	size_t len = strlen( pStr );
 	if ( nChars >= len )
 	{
 		V_strncpy( pOut, pStr, outSize );
 	}
 	else
 	{
-		V_StrSlice( pStr, -nChars, strlen( pStr ), pOut, outSize );
+		V_StrSlice( pStr, -nChars, static_cast< int >( strlen( pStr ) ), pOut, outSize );
 	}
 }
 

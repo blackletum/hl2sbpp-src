@@ -256,7 +256,7 @@ public:
 
 	void GetStringManualCharCount( char *pString, size_t maxLenInChars )
 	{
-		GetString( pString, maxLenInChars );
+		GetString( pString, static_cast<int>( maxLenInChars ) );
 	}
 
 	template <size_t maxLenInChars> void GetString( char( &pString )[maxLenInChars] )

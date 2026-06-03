@@ -31,6 +31,54 @@
 #include "tier1/checksum_sha1.h"
 #endif
 
+#ifdef _WIN32 // MSVC complains if we don't use safe functions
+#include <cstdio>
+#include <cstdarg>
+#include <cstring>
+
+static FILE *fopen_compat( const char *filename, const char *mode )
+{
+	FILE *fp = nullptr;
+
+	if ( fopen_s( &fp, filename, mode ) != 0 )
+		return nullptr;
+
+	return fp;
+}
+
+#define fopen fopen_compat
+
+int sprintf_compat( char *dest, const char *format, ... )
+{
+	va_list args;
+	va_start( args, format );
+
+	int result = vsnprintf_s( dest, strlen(dest), _TRUNCATE, format, args );
+
+	va_end( args );
+
+	return result;
+}
+
+#define sprintf sprintf_compat
+
+char *strcat_compat( char *dest, const char *src )
+{
+	strcat_s( dest, strlen(dest), src );
+	return dest;
+}
+
+#define strcat strcat_compat
+
+char *strcpy_compat( char *dest, const char *src )
+{
+	strcpy_s( dest, strlen(dest), src );
+	return dest;
+}
+
+#define strcpy strcpy_compat
+#endif // _WIN32
+
 #define MAX_FILE_READ_BUFFER 8000
 
 // Rotate x bits to the left

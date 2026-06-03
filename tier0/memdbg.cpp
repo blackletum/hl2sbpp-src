@@ -1027,7 +1027,7 @@ const char *CDbgMemAlloc::FindOrCreateFilename( const char *pFileName )
 	Filenames_t::const_iterator iter = m_pFilenames->find( pFileName );
 	if ( iter == m_pFilenames->end() )
 	{
-		int nLen = strlen(pFileName) + 1;
+		size_t nLen = strlen(pFileName) + 1;
 		pszFilenameCopy = (char *)DebugAlloc( nLen );
 		memcpy( pszFilenameCopy, pFileName, nLen );
 		m_pFilenames->insert( pszFilenameCopy );
@@ -1197,7 +1197,7 @@ void *CDbgMemAlloc::Alloc( size_t nSize, const char *pFileName, int nLine )
 	void *pMem = InternalMalloc( nSize, pFileName, nLine );
 	m_Timer.End();
 
-	ApplyMemoryInitializations( pMem, nSize );
+	ApplyMemoryInitializations( pMem, static_cast<int>(nSize) );
 
 	if ( pMem )
 	{

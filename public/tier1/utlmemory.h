@@ -448,7 +448,7 @@ CUtlMemory<T,I>::~CUtlMemory()
 	Purge();
 
 #ifdef _DEBUG
-	m_pMemory = reinterpret_cast< T* >( 0xFEFEBAAD );
+	m_pMemory = reinterpret_cast<T *>( static_cast<std::uintptr_t>( 0xFEFEBAAD ) );
 	m_nAllocationCount = 0x7BADF00D;
 #endif
 }
