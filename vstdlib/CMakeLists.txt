@@ -32,7 +32,7 @@ if(WIN32)
     endif()
 endif()
 
-if (X360 AND NOT APPLE)
+if (X360 OR NOT APPLE)
     list(APPEND VSTDLIB_SOURCES
         coroutine.cpp
     )
