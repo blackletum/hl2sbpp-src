@@ -675,13 +675,13 @@ int CSmallBlockPool::GetCommittedSize()
 // Return the total blocks memory is committed for in the heap
 int CSmallBlockPool::CountCommittedBlocks()
 {		 
-	return  GetCommittedSize() / GetBlockSize();
+	return  GetCommittedSize() / static_cast<int>(GetBlockSize());
 }
 
 // Count the number of allocated blocks in the heap:
 int CSmallBlockPool::CountAllocatedBlocks()
 {
-	return CountCommittedBlocks( ) - ( CountFreeBlocks( ) + ( m_pCommitLimit - (byte *)m_pNextAlloc ) / GetBlockSize() );
+	return CountCommittedBlocks( ) - ( CountFreeBlocks( ) + ( m_pCommitLimit - (byte *)m_pNextAlloc ) / static_cast<int>(GetBlockSize()) );
 }
 
 int CSmallBlockPool::Compact()
@@ -991,7 +991,7 @@ void *CSmallBlockHeap::Realloc( void *p, size_t nBytes )
 
 	if ( pNewBlock )
 	{
-		int nBytesCopy = min( nBytes, pOldPool->GetBlockSize() );
+		size_t nBytesCopy = min( nBytes, pOldPool->GetBlockSize() );
 		memcpy( pNewBlock, p, nBytesCopy );
 	} 
 
@@ -1042,7 +1042,7 @@ void CSmallBlockHeap::DumpStats( FILE *pFile )
 			Msg( "Pool %i: (size: %llu) blocks: allocated:%i free:%i committed:%i (committed size:%u kb)\n",i, (uint64)m_Pools[i].GetBlockSize(),m_Pools[i].CountAllocatedBlocks(), m_Pools[i].CountFreeBlocks(),m_Pools[i].CountCommittedBlocks(), m_Pools[i].GetCommittedSize() / 1024);
 
 			bytesCommitted += m_Pools[i].GetCommittedSize();
-			bytesAllocated += ( m_Pools[i].CountAllocatedBlocks() * m_Pools[i].GetBlockSize() );
+			bytesAllocated += ( m_Pools[i].CountAllocatedBlocks() * static_cast<unsigned int>(m_Pools[i].GetBlockSize()) );
 		}
 
 		Msg( "Totals: Committed:%u kb Allocated:%u kb\n", bytesCommitted / 1024, bytesAllocated / 1024 );
@@ -1482,18 +1482,18 @@ void *CStdMemAlloc::Alloc( size_t nSize )
 	if ( m_SmallBlockHeap.ShouldUse( nSize ) )
 	{
 		pMem = m_SmallBlockHeap.Alloc( nSize );
-	ApplyMemoryInitializations( pMem, nSize );
-	return pMem;
-}
+		ApplyMemoryInitializations( pMem, static_cast<int>(nSize) );
+		return pMem;
+	}
 
 #endif
 
 	pMem = malloc( nSize );
-	ApplyMemoryInitializations( pMem, nSize );
-		if ( !pMem )
-		{
-			SetCRTAllocFailed( nSize );
-		}
+	ApplyMemoryInitializations( pMem, static_cast< int >( nSize ) );
+	if ( !pMem )
+	{
+		SetCRTAllocFailed( nSize );
+	}
 	return pMem;
 }
 
