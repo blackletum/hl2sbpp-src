@@ -29,10 +29,18 @@ if(WIN32)
             coroutine_win64.masm
             GetStackPtr64.masm
         )
+		
+		set_source_files_properties(
+			coroutine_win64.masm
+			GetStackPtr64.masm
+			PROPERTIES
+				LANGUAGE ASM_MASM
+				COMPILE_OPTIONS "/Zi"
+		)
     endif()
 endif()
 
-if (X360 OR NOT APPLE)
+if (NOT X360 AND NOT APPLE)
     list(APPEND VSTDLIB_SOURCES
         coroutine.cpp
     )
@@ -66,7 +74,7 @@ target_link_libraries(vstdlib
 if(MSVC)
     target_link_options(vstdlib PRIVATE
 	    # symbol 'KeyValuesSystem' defined in 'KeyValuesSystem.obj' is imported by 'tier1.lib(KeyValues.obj)' in function '"public: static __int64 __cdecl KeyValues::GetSymbolForStringClassic(char const *,bool)" (?GetSymbolForStringClassic@KeyValues@@SA_JPEBD_N@Z)'
-	    /ignore:4217
+	    $<$<LINK_LANGUAGE:C,CXX>:/ignore:4217>
     )
     target_compile_options(vstdlib
         PRIVATE

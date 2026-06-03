@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(hl2sbpp)
+project(hl2sbpp LANGUAGES CXX ASM_MASM)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -35,16 +35,34 @@ if(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
 endif()
 
 if(MSVC)
-	add_compile_options(/W4)
+	add_compile_options(
+		$<$<COMPILE_LANGUAGE:C,CXX>:/W4>
+	)
 	
 	# https://github.com/ValveSoftware/source-sdk-2013/blob/c98767b329f07c086281d787cc0e1c4d9a6b1410/src/vpc_scripts/source_win32_base.vpc#L52-L64
-	add_compile_options(/wd4316 /wd5033 /wd5054 /wd5055 /wd4577 /wd4091 /wd4355 /wd4101)
+	add_compile_options(
+		$<$<COMPILE_LANGUAGE:C,CXX>:/wd4316>
+		$<$<COMPILE_LANGUAGE:C,CXX>:/wd5033>
+		$<$<COMPILE_LANGUAGE:C,CXX>:/wd5054>
+		$<$<COMPILE_LANGUAGE:C,CXX>:/wd5055>
+		$<$<COMPILE_LANGUAGE:C,CXX>:/wd4577>
+		$<$<COMPILE_LANGUAGE:C,CXX>:/wd4091>
+		$<$<COMPILE_LANGUAGE:C,CXX>:/wd4355>
+		$<$<COMPILE_LANGUAGE:C,CXX>:/wd4101>
+	)
 	
 	# https://github.com/ValveSoftware/source-sdk-2013/blob/c98767b329f07c086281d787cc0e1c4d9a6b1410/src/vpc_scripts/source_win32_base.vpc#L81-L93
-	add_compile_options(/Gw /Zc:inline /Zc:threadSafeInit- /Wv:18)
+	add_compile_options(
+		$<$<COMPILE_LANGUAGE:C,CXX>:/Gw>
+		$<$<COMPILE_LANGUAGE:C,CXX>:/Zc:inline>
+		$<$<COMPILE_LANGUAGE:C,CXX>:/Zc:threadSafeInit->
+		$<$<COMPILE_LANGUAGE:C,CXX>:/Wv:18>
+	)
 	
-	add_compile_definitions(COMPILER_MSVC=1)
-	add_compile_definitions(MSVC=1)
+	add_compile_definitions(
+		$<$<COMPILE_LANGUAGE:C,CXX>:COMPILER_MSVC=1>
+		$<$<COMPILE_LANGUAGE:C,CXX>:MSVC=1>
+	)
 
 	if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
 		add_compile_options(/clang:-Wno-character-conversion /clang:-Wno-error=character-conversion)
@@ -80,13 +98,16 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 8)
 	if (WIN32)
 		add_compile_definitions(WIN64=1)
 		add_compile_definitions(_WIN64=1)
-		add_compile_definitions(COMPILER_MSVC64=1)
 		
-		# C4267: 'var' : conversion from 'size_t' to 'type', possible loss of data
-		add_compile_options(/wd4267)
+		if (MSVC)
+			add_compile_definitions($<$<COMPILE_LANGUAGE:C,CXX>:COMPILER_MSVC64=1>)
+			
+			# C4267: 'var' : conversion from 'size_t' to 'type', possible loss of data
+			add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/wd4267>)
+		endif()
 	endif()
 else()
-	if (WIN32)
+	if (WIN32 and MSVC)
 		add_compile_definitions(COMPILER_MSVC32=1)
 	endif()
 endif()
