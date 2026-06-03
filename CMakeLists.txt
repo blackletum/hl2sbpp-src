@@ -36,11 +36,17 @@ endif()
 
 if(MSVC)
 	add_compile_options(/W4)
+	
+	# https://github.com/ValveSoftware/source-sdk-2013/blob/c98767b329f07c086281d787cc0e1c4d9a6b1410/src/vpc_scripts/source_win32_base.vpc#L52-L64
+	add_compile_options(/wd4316 /wd5033 /wd5054 /wd5055 /wd4577 /wd4091 /wd4355 /wd4101)
+	
+	# https://github.com/ValveSoftware/source-sdk-2013/blob/c98767b329f07c086281d787cc0e1c4d9a6b1410/src/vpc_scripts/source_win32_base.vpc#L81-L93
+	add_compile_options(/Gw /Zc:inline /Zc:threadSafeInit- /Wv:18)
+	
 	add_compile_definitions(COMPILER_MSVC=1)
 	add_compile_definitions(MSVC=1)
 
 	if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-		add_compile_definitions(COMPILER_CLANG=1)
 		add_compile_options(/clang:-Wno-character-conversion /clang:-Wno-error=character-conversion)
 	else()
 	endif()
@@ -66,6 +72,26 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
 	add_compile_definitions(CLANG=1)
 endif()
 
+if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+	add_compile_definitions(__x86_64__=1)
+	add_compile_definitions(PLATFORM_64BITS=1)
+	set(PLATFORM_64BITS true)
+
+	if (WIN32)
+		add_compile_definitions(WIN64=1)
+		add_compile_definitions(_WIN64=1)
+		add_compile_definitions(COMPILER_MSVC64=1)
+		
+		# C4267: 'var' : conversion from 'size_t' to 'type', possible loss of data
+		add_compile_options(/wd4267)
+	endif()
+else()
+	if (WIN32)
+		add_compile_definitions(COMPILER_MSVC32=1)
+	endif()
+endif()
+
+
 # global options start here
 
 # end global options
@@ -83,22 +109,6 @@ include_directories(
 )
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-
-if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-	add_compile_definitions(__x86_64__=1)
-	set(PLATFORM_64BITS true)
-
-	if (WIN32)
-		add_compile_definitions(WIN64=1)
-		add_compile_definitions(_WIN64=1)
-		add_compile_definitions(COMPILER_MSVC64=1)
-	endif()
-else()
-	if (WIN32)
-		add_compile_definitions(COMPILER_MSVC32=1)
-	endif()
-endif()
-
 find_package(Doxygen OPTIONAL_COMPONENTS dot)
 
 if(DOXYGEN_FOUND)
@@ -121,5 +131,6 @@ add_subdirectory(${SRC_DIR}/tier3)
 add_subdirectory(${SRC_DIR}/vstdlib)
 
 add_subdirectory(${SRC_DIR}/appframework)
+add_subdirectory(${SRC_DIR}/vgui2)
 
 message("Install Prefix is set to ${CMAKE_INSTALL_PREFIX}.")
