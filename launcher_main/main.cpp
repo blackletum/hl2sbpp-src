@@ -6,8 +6,8 @@
 
 #if defined( _WIN32 ) && !defined( _X360 )
 #include <windows.h>
-#include <stdio.h>
-#include <assert.h>
+#include <cstdio>
+#include <cassert>
 #include <direct.h>
 #endif
 #if defined( _X360 )

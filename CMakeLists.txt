@@ -168,6 +168,12 @@ add_subdirectory(${SRC_DIR}/tier3)
 add_subdirectory(${SRC_DIR}/vstdlib)
 
 add_subdirectory(${SRC_DIR}/appframework)
+add_subdirectory(${SRC_DIR}/dmxloader)
 add_subdirectory(${SRC_DIR}/vgui2)
+
+#add_subdirectory(${SRC_DIR}/launcher)
+add_subdirectory(${SRC_DIR}/launcher_main)
+
+#add_subdirectory(${SRC_DIR}/game)
 
 message("Install Prefix is set to ${CMAKE_INSTALL_PREFIX}.")
