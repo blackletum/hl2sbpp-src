@@ -86,6 +86,13 @@ if(WIN32)
 		list(APPEND TIER0_SOURCES
 			InterlockedCompareExchange128.masm
 		)
+
+		set_source_files_properties(
+			InterlockedCompareExchange128.masm
+			PROPERTIES
+				LANGUAGE ASM_MASM
+				COMPILE_OPTIONS "/Zi"
+		)
 	endif()
 elseif(UNIX AND NOT APPLE)
 	list(APPEND TIER0_SOURCES
