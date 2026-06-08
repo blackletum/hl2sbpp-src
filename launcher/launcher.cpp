@@ -577,6 +577,7 @@ static bool IsWin98OrOlder()
 //-----------------------------------------------------------------------------
 void TryToLoadSteamOverlayDLL()
 {
+	#if 0
 #if defined( WIN32 ) && !defined( _X360 )
 	// First, check if the module is already loaded, perhaps because we were run from Steam directly
 	HMODULE hMod = GetModuleHandle( "GameOverlayRenderer" DLL_EXT_STRING );
@@ -606,6 +607,7 @@ void TryToLoadSteamOverlayDLL()
 	}
 
 #endif
+	#endif
 }
 
 //-----------------------------------------------------------------------------

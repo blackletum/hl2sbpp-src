@@ -170,7 +170,7 @@ void CDirtySpatialPartitionEntityList::OnPreQuery( SpatialPartitionListMask_t li
 
 	int nThreadID = g_nThreadID;
 
-	if ( m_partitionWriteId != 0 && m_partitionWriteId == nThreadID + 1 )
+	if ( m_partitionWriteId != 0 && m_partitionWriteId == (unsigned)nThreadID + 1 )
 		return;
 
 #ifdef CLIENT_DLL

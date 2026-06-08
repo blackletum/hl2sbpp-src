@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(hl2sbpp LANGUAGES CXX ASM_MASM)
+project(hl2sbpp LANGUAGES C CXX ASM_MASM)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -93,7 +93,7 @@ endif()
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
 	add_compile_definitions(__x86_64__=1)
 	add_compile_definitions(PLATFORM_64BITS=1)
-	set(PLATFORM_64BITS true)
+	set(PLATFORM_64BITS 1)
 
 	if (WIN32)
 		add_compile_definitions(WIN64=1)
@@ -112,6 +112,7 @@ else()
 	endif()
 endif()
 
+set(GAMES)
 
 # global options start here
 
@@ -125,20 +126,61 @@ else()
     set(USE_SDL2_DEFAULT OFF)
 endif()
 
+option(HL2SBPP "Enables HL2:SB++-related projects" ON)
 option(USE_SDL2 "Makes use of SDL2 for the windowing and audio interface." ${USE_SDL2_DEFAULT})
+option(ENABLE_REPLAY "Enables Source Replay" OFF)
 
 # end global options
+
+if (HL2SBPP)
+list(APPEND GAMES "hl2sbpp")
+endif()
 
 if (USE_SDL2)
 add_compile_definitions(USE_SDL=1)
 endif(USE_SDL2)
 
+set(BUILD_REPLAY 0)
+if (ENABLE_REPLAY)
+	set(BUILD_REPLAY 1)
+endif(ENABLE_REPLAY)
+
+set(IS_WINDOWS 0)
+set(IS_UNIX 0)
+set(IS_POSIX 0)
+set(IS_MACOS 0)
+set(IS_LINUX 0)
+set(IS_ANDROID 0)
+set(IS_X360 0)
+
 if(WIN32)
-    	message(STATUS "Building for Windows")
-elseif(APPLE)
-    	message(STATUS "Building for macOS")
+	set(IS_WINDOWS 1)
+    message(STATUS "Building for Windows")
+
+	if (BUILD_X360)
+		set(IS_X360 1)
+		add_compile_definitions(_X360=1)
+	else()
+		set(IS_X360 0)
+		add_compile_definitions(NO_X360_XDK=1)
+	endif()
 elseif(UNIX)
-    	message(STATUS "Building for Linux")
+	set(IS_UNIX 1)
+	set(IS_POSIX 1)
+
+	if (APPLE)
+		set(IS_MACOS 1)
+    	message(STATUS "Building for macOS")
+	elseif(LINUX)
+		set(IS_LINUX 1)
+
+		if (ANDROID)
+			set(IS_ANDROID 1)
+    		message(STATUS "Building for Linux (Android)")
+		else()
+    		message(STATUS "Building for Linux")
+		endif()
+	endif()
 endif()
 
 include_directories(
@@ -154,6 +196,13 @@ if(DOXYGEN_FOUND)
     doxygen_add_docs(doc ${SRC_DIR})
 endif()   
 
+add_compile_definitions(
+	MOON=1
+	CURL_STATICLIB=1
+)
+
+set(HTTPLIB_SHARED 1)
+
 include(Common)
 
 # end global configuration here
@@ -167,13 +216,24 @@ add_subdirectory(${SRC_DIR}/tier2)
 add_subdirectory(${SRC_DIR}/tier3)
 add_subdirectory(${SRC_DIR}/vstdlib)
 
-add_subdirectory(${SRC_DIR}/appframework)
-add_subdirectory(${SRC_DIR}/dmxloader)
-add_subdirectory(${SRC_DIR}/vgui2)
+# third-party projects
+add_subdirectory(${SRC_DIR}/thirdparty/cpp-httplib)
+add_subdirectory(${SRC_DIR}/thirdparty/SDL)
 
-#add_subdirectory(${SRC_DIR}/launcher)
+add_subdirectory(${SRC_DIR}/appframework)
+add_subdirectory(${SRC_DIR}/bitmap)
+add_subdirectory(${SRC_DIR}/choreoobjects)
+add_subdirectory(${SRC_DIR}/dmxloader)
+add_subdirectory(${SRC_DIR}/lua)
+add_subdirectory(${SRC_DIR}/particles)
+add_subdirectory(${SRC_DIR}/stub_steam)
+add_subdirectory(${SRC_DIR}/vgui2)
+add_subdirectory(${SRC_DIR}/vpklib)
+add_subdirectory(${SRC_DIR}/vtf)
+
+add_subdirectory(${SRC_DIR}/launcher)
 add_subdirectory(${SRC_DIR}/launcher_main)
 
-#add_subdirectory(${SRC_DIR}/game)
+add_subdirectory(${SRC_DIR}/game)
 
 message("Install Prefix is set to ${CMAKE_INSTALL_PREFIX}.")

@@ -52,7 +52,7 @@ target_link_libraries(appframework PRIVATE
 
 if (USE_SDL2)
 target_include_directories(appframework PRIVATE
-	"${SRC_DIR}/thirdparty/SDL"
+	"${SRC_DIR}/thirdparty/SDL/include"
 )
 
 target_link_libraries(appframework PRIVATE

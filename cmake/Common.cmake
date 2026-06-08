@@ -44,6 +44,62 @@ endfunction()
 function(add_game_library target game_name)
     add_library(${target} MODULE ${ARGN})
 
+	target_include_directories(
+		${target} PRIVATE
+		${SRC_DIR}/public
+		${SRC_DIR}/public/appframework
+		${SRC_DIR}/public/tier0
+		${SRC_DIR}/public/tier1
+		${SRC_DIR}/public/tier2
+		${SRC_DIR}/public/tier3
+		${SRC_DIR}/public/mathlib
+		${SRC_DIR}/public/vstdlib
+		${SRC_DIR}/public/vphysics
+		${SRC_DIR}/public/vgui_controls
+		${SRC_DIR}/game/client
+		${SRC_DIR}/vgui2/include
+		${SRC_DIR}/vgui2/controls
+		${SRC_DIR}/game/shared
+		${SRC_DIR}/game/client/game_controls
+		${SRC_DIR}/thirdparty/sixensesdk/include
+	)
+
+	target_link_libraries(
+		${target} PRIVATE
+
+		$<${IS_MACOS}:-framework Carbon>
+		$<${IS_LINUX}:rt>
+		$<${IS_WINDOWS}:winmm>
+		$<$<AND:${IS_WINDOWS},${BUILD_REPLAY}>:wsock32;Ws2_32>
+		particles
+
+		bitmap
+		choreoobjects
+		dmxloader
+		mathlib
+		matsys_controls
+		tier0
+		tier1
+		tier2
+		tier3
+		vgui_controls
+		vtf
+		steam_api
+
+		#"$<${IS_POSIX}:libcrypto>"
+
+		#"$<${IS_MACOS}:curl>"
+
+		#"$<${IS_WINDOWS}:libcurl>"
+		#"$<$<OR:${IS_WINDOWS},${IS_LINUX}>libz>"
+
+		#"$<${IS_LINUX}:libcurl>"
+		#"$<${IS_LINUX}:libcurlssl>"
+
+		#"$<${IS_LINUX}:libssl>"
+
+	)
+
     install(
         TARGETS ${target}
         RUNTIME DESTINATION ${game_name}/bin

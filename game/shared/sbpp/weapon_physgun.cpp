@@ -984,7 +984,7 @@ void CWeaponPhysicsGun::EffectUpdate( void )
 	if ( pObject )
 	{
 		// one hell of a hack
-		const char *pszPropName = pObject->GetClassname();
+		//const char *pszPropName = pObject->GetClassname();
 
 #ifdef GAME_DLL
 		IPhysicsObject *pFreeze = GetPhysObjFromPhysicsBone( pObject, m_physicsBone );

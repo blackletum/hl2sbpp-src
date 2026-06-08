@@ -10,29 +10,37 @@
 #pragma once
 #endif // _WIN32
 
-#include <curl/curl.h>
-#include <string>
+#include <httplib.h>
 #include <functional>
+#include <memory>
 
-enum WebError_t
+typedef enum WebError_e
 {
 	WEB_OK = 0,
 	WEB_ERR_INIT_FAILED,
 	WEB_ERR_CURL_FAILED,
+	WEB_ERR_HTTPLIB_FAILED = WEB_ERR_CURL_FAILED,
 	WEB_ERR_HTTP_STATUS,
 	WEB_ERR_FILE_OPEN_FAILED,
 	WEB_ERR_INVALID_URL,
-};
+} WebError_t;
 
-struct WebResult_t
+typedef struct WebResult_s
 {
 	bool		success;
 	WebError_t	error;
 	long		httpCode;
-	CURLcode	curlCode;
-	std::string errorMessage;
-	std::string body;
-};
+	const char *errorMessage;
+	const char *body;
+} WebResult_t;
+
+typedef struct ParsedUrl_s
+{
+	const char *scheme;
+	const char *host;
+	int			port = 0;
+	const char *path;
+} ParsedUrl_t;
 
 typedef std::function< void( const WebResult_t & ) > RequestCallback;
 typedef std::function< void( bool success, const char *localPath ) > WebDownloadCallback;
@@ -46,19 +54,18 @@ public:
 	bool Init();
 	void Shutdown();
 
-	bool Get( const std::string &url, RequestCallback callback );
-	bool Post( const std::string &url, const std::string &jsonBody, RequestCallback callback );
-	bool DownloadToFile( const std::string &url, const std::string &filePath );
+	bool Get( const char *url, RequestCallback callback );
+	bool Post( const char *url, const char *jsonBody, RequestCallback callback );
+	bool DownloadToFile( const char *url, const char *filePath );
 
 	bool DownloadToFileAsync( const char *url, const char *localPath, WebDownloadCallback cb );
 
-private:
-	static size_t WriteMemoryCallback( void *contents, size_t size, size_t nmemb, void *userp );
-	static size_t WriteFileCallback( void *contents, size_t size, size_t nmemb, void *userp );
+	static std::unique_ptr< httplib::Client > CreateClient( const char *url );
 
-	bool		ApplyCommonOptions( CURL *curl, char *errbuf );
-	bool		LoadCACertBlob( CURL *curl );
-	WebResult_t PerformAndBuildResult( CURL *curl, char *errbuf );
+private:
+	static WebResult_t BuildResult( const httplib::Result &res );
+
+	bool		LoadCACertBlob( httplib::Client *client );
 };
 
 #endif // WEBMANAGER_H

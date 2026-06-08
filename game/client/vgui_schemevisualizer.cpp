@@ -177,9 +177,9 @@ void CSchemeVisualizer::AddBordersToList()
 void CSchemeVisualizer::AddFontsToList()
 {
 #ifdef POSIX
-	const char strOAccent[] = { (char)0xc3, (char)0x93, (char)0x00 };	// UTF-8 for U+00D3 (LATIN CAPITAL LETTER O WITH ACUTE)
+	const char strOAccent[] = { static_cast<uint8>(0xc3), static_cast<uint8>(0x93), static_cast<uint8>(0x00) };	// UTF-8 for U+00D3 (LATIN CAPITAL LETTER O WITH ACUTE)
 #else
-	const uint8 strOAccent[] = { (char)0xd3, (char)0x00	};
+	const uint8 strOAccent[] = { static_cast<uint8>(0xd3), static_cast<uint8>(0x00) };
 #endif
 	// Stick an intl character in here to test accents (O')
 	CFmtStr fmtText( "ABCDEFGHIJKLMN%sPQRSTUVWXYZabcdefhijklmnopqrstuvwxyz0123456789!@#$%%^&*()-_=+", strOAccent );

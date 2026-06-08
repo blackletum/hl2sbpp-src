@@ -118,7 +118,7 @@ target_include_directories(tier0
 
 if (USE_SDL2)
 target_include_directories(tier0 PRIVATE
-	"${SRC_DIR}/thirdparty/SDL"
+	"${SRC_DIR}/thirdparty/SDL/include"
 )
 endif()
 

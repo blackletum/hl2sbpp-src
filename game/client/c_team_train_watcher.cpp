@@ -85,7 +85,7 @@ void C_TeamTrainWatcher::UpdateGlowEffect( void )
 	// create a new effect if we have a cart
 	if ( m_hGlowEnt )
 	{
-		float r, g, b;
+		float r = 0, g = 0, b = 0;
 #ifndef SBPP
 		TeamplayRoundBasedRules()->GetTeamGlowColor( GetTeamNumber(), r, g, b );
 #endif

@@ -812,7 +812,7 @@ void ClientModeShared::ProcessInput(bool bActive)
 #ifdef SBPP
 void __MsgFunc_StartMessageMode( bf_read &msg )
 {
-    int mode = msg.ReadByte();
+    //int mode = msg.ReadByte();
 
     GetClientModeNormal()->StartMessageMode( MM_SAY );
 }

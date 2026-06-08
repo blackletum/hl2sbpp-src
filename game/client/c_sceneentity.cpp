@@ -811,7 +811,7 @@ CChoreoScene *C_SceneEntity::LoadScene( const char *filename )
 	Q_FixSlashes( loadfile );
 
 	void *pBuffer = 0;
-	CChoreoScene *pScene;
+	CChoreoScene *pScene = nullptr;
 
 	int fileSize = filesystem->ReadFileEx( loadfile, "GAME", &pBuffer, true );
 	if (fileSize)

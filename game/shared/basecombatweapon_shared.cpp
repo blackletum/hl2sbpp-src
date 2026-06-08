@@ -1538,7 +1538,7 @@ bool CBaseCombatWeapon::DefaultDeploy( char *szViewModel, char *szWeaponModel, i
 		if ( flDeploySpeed <= 0.0f )
 			flDeploySpeed = 1.0f; // sanity check
 
-		float flTime = SequenceDuration() / flDeploySpeed;
+		//float flTime = SequenceDuration() / flDeploySpeed;
 
 		CBaseViewModel *vm = pOwner->GetViewModel();
 		if ( vm )

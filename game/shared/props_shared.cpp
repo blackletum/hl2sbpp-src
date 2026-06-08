@@ -220,15 +220,15 @@ void CPropData::ParsePropDataFile( void )
 	FileFindHandle_t findHandle;
 	for ( const char *pFile = filesystem->FindFirst( "scripts/propdata/*.txt", &findHandle ); pFile && *pFile; pFile = filesystem->FindNext( findHandle ) )
 	{
-		char *propdatafile;
+		char propdatafile[MAX_PATH];
 
 		if ( !filesystem->FileExists( pFile ) )
 		{
-			propdatafile = "scripts/propdata.txt";
+			Q_strncpy(propdatafile, "scripts/propdata.txt", sizeof(propdatafile));
 		}
 		else
 		{
-			Q_snprintf( propdatafile, 64, "scripts/propdata/%s", pFile );
+			Q_snprintf( propdatafile, sizeof(propdatafile), "scripts/propdata/%s", pFile );
 		}
 
 		if ( !m_pKVPropData->LoadFromFile( filesystem, propdatafile ) )

@@ -7,7 +7,7 @@
 #ifndef MOUNT_H
 #define MOUNT_H
 #ifdef _WIN32
-#pragma ocne
+#pragma once
 #endif // _WIN32
 
 void loadMount();
