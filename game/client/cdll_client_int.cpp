@@ -1290,7 +1290,7 @@ void CHLClient::PostInit()
            	"Hey. Stealing is bad.\n"
             "If you're a normal user getting this error, check how you installed your addons or where you got HL2:SB++ from.\n"
             "If you intentionally removed the credits to claim ownership, just know that I have my eyes upon you and this will NOT go unnoticed.\n\n"
-            "Yours sincerely, The Aridity Team. https://discord.gg/3DkET6fqXr\n"
+            "Yours sincerely, Team HL2:SB++. https://discord.gg/3DkET6fqXr\n"
         );
 	}
 	// protect end
