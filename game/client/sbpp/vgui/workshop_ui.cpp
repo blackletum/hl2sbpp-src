@@ -541,10 +541,10 @@ void CAddonThumbnailPanel::ApplySchemeSettings( IScheme *pScheme )
 	BaseClass::ApplySchemeSettings( pScheme );
 
 	SetBorder( pScheme->GetBorder( "ButtonBorder" ) );
-	SetBgColor( Color( 180, 180, 180, 255 ) );
+	SetBgColor( Color( 220, 220, 220, 255 ) );
 
 	if ( m_pNameLabel )
-		m_pNameLabel->SetFgColor( Color( 255, 255, 255, 255) );
+		m_pNameLabel->SetFgColor( Color( 25, 25, 25, 255) );
 	if ( m_pSizeLabel )
 		m_pSizeLabel->SetFgColor( Color( 150, 150, 150, 255 ) );
 }

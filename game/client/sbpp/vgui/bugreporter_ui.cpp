@@ -9,7 +9,6 @@
 #include "sbpp_globaldef.h"
 #include "id.h"
 
-#include <cstdio>
 #include <vgui/IScheme.h>
 #include <vgui/ISurface.h>
 #include <vgui/IInput.h>
@@ -36,6 +35,81 @@ static const int kDescMax = 4000;
 static const int kReporterMax = 64;
 static const int kAddonIdMax = 32;
 static const int kVersionMax = 32;
+
+static bool IsLikelyGibberish( const char *text )
+{
+	if ( !text || !text[0] )
+		return true;
+
+	int len = Q_strlen( text );
+
+	int vowels = 0;
+	int consonants = 0;
+	int digits = 0;
+	int other = 0;
+
+	int repeatStreak = 1;
+	int maxRepeat = 1;
+
+	for ( int i = 0; i < len; i++ )
+	{
+		char c = text[i];
+
+		if ( i > 0 && c == text[i - 1] )
+			repeatStreak++;
+		else
+			repeatStreak = 1;
+
+		if ( repeatStreak > maxRepeat )
+			maxRepeat = repeatStreak;
+
+		if ( c >= 'A' && c <= 'Z' )
+			c = c - 'A' + 'a';
+
+		if ( c >= 'a' && c <= 'z' )
+		{
+			switch ( c )
+			{
+			case 'a':
+			case 'e':
+			case 'i':
+			case 'o':
+			case 'u':
+			case 'y':
+				vowels++;
+				break;
+			default:
+				consonants++;
+				break;
+			}
+		}
+		else if ( c >= '0' && c <= '9' )
+		{
+			digits++;
+		}
+		else
+		{
+			other++;
+		}
+	}
+
+	int letters = vowels + consonants;
+
+	if ( letters < 5 )
+		return true;
+
+	if ( maxRepeat >= 6 )
+		return true;
+
+	if ( ( letters * 100 ) / len < 50 )
+		return true;
+
+	int vowelRatio = ( vowels * 100 ) / ( letters + 1 );
+	if ( vowelRatio < 10 || vowelRatio > 70 )
+		return true;
+
+	return false;
+}
 
 static void GetEntryText( TextEntry *pEntry, char *out, int outSize )
 {
@@ -307,6 +381,18 @@ void CBugReportPanel::SubmitReport()
 		return;
 	}
 
+	if ( IsLikelyGibberish( name ) )
+	{
+		ShowError( "#SBPP_BugReport_ErrTitle", "Name looks invalid." );
+		return;
+	}
+
+	if ( IsLikelyGibberish( title ) )
+	{
+		ShowError( "#SBPP_BugReport_ErrTitle", "Title looks invalid." );
+		return;
+	}
+
 	if ( !g_pWebManager )
 		return;
 
@@ -318,14 +404,10 @@ void CBugReportPanel::SubmitReport()
 	JsonEscape( addon, eAddon, sizeof( eAddon ) );
 	JsonEscape( description, eDesc, sizeof( eDesc ) );
 
-	char reporter[256];
-	const char* userID = CUserID::Get().GetID();
+	char		reporter[256];
+	const char *userID = CUserID::Get().GetID();
 
-	Q_snprintf(reporter, sizeof(reporter),
-		"%s (%s)",
-		eName,
-		userID ? userID : "unknown"
-	);
+	Q_snprintf( reporter, sizeof( reporter ), "%s (%s)", eName, userID ? userID : "unknown" );
 
 	char body[kDescMax * 2 + 1024];
 	Q_snprintf( body, sizeof( body ),

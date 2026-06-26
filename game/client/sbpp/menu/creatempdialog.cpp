@@ -277,7 +277,7 @@ public:
 	{
 		m_pLabel = new vgui::Label( this, "MapLabel", panelName );
 		m_pLabel->SetContentAlignment( vgui::Label::a_center );
-		m_pLabel->SetFgColor( Color( 255, 255, 255, 255 ) );
+		m_pLabel->SetFgColor( Color( 25, 25, 25, 255 ) );
 		m_pLabel->SetBgColor( Color( 0, 0, 0, 0 ) );
 
 		s_allButtons.push_back( this );
