@@ -48,6 +48,14 @@ struct TexInfo
 	}
 };
 
+struct DecodedImage
+{
+	unsigned char *pixels = nullptr;
+	int width = 0;
+	int height = 0;
+	bool ok = false;
+};
+
 class ImageExtButton : public vgui::Panel
 {
 	DECLARE_CLASS_SIMPLE( ImageExtButton, vgui::Panel );
@@ -59,6 +67,20 @@ public:
 	}
 
 	unsigned char *ResizeImage( unsigned char *originalData, int originalWidth, int originalHeight, int &newWidth, int &newHeight );
+
+
+private:
+	DecodedImage m_pendingDecode;
+	bool         m_pendingDecodeValid;
+	CThreadFastMutex m_pendingDecodeLock;
+
+	DecodedImage DecodeImageWorker( std::string filename );
+	void DecodeImageAndNotify( std::string filename, vgui::VPANEL hSelf );
+
+public:
+	void SetImageAsync( const char *normalImagePath );
+
+	MESSAGE_FUNC( OnImageDecoded, "ImageDecoded" );
 
 private:
 	ImageData m_normalImage;

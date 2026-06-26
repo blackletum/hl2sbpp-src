@@ -13,6 +13,7 @@
 #include <curl/curl.h>
 #include <string>
 #include <functional>
+#include "vstdlib/jobthread.h"
 
 enum WebError_t
 {
@@ -50,6 +51,8 @@ public:
 	bool Post( const std::string &url, const std::string &jsonBody, RequestCallback callback );
 	bool DownloadToFile( const std::string &url, const std::string &filePath );
 
+	bool GetAsync( const std::string &url, RequestCallback callback );
+	bool PostAsync( const std::string &url, const std::string &jsonBody, RequestCallback callback );
 	bool DownloadToFileAsync( const char *url, const char *localPath, WebDownloadCallback cb );
 
 private:
@@ -59,6 +62,8 @@ private:
 	bool		ApplyCommonOptions( CURL *curl, char *errbuf );
 	bool		LoadCACertBlob( CURL *curl );
 	WebResult_t PerformAndBuildResult( CURL *curl, char *errbuf );
+
+	void DownloadToFileWorker( std::string url, std::string filePath, WebDownloadCallback cb );
 };
 
 #endif // WEBMANAGER_H

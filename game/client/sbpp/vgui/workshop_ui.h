@@ -178,6 +178,7 @@ public:
 	MESSAGE_FUNC( OnRefreshClicked, "RefreshClicked" );
 	MESSAGE_FUNC_PARAMS( OnScrollBarMoved, "ScrollBarSliderMoved", pKV );
 	MESSAGE_FUNC_PARAMS( OnThumbReady, "ThumbReady", kv );
+	MESSAGE_FUNC_PARAMS( OnAddonsReady, "AddonsReady", kv );
 
 private:
 	CUtlVector< CAddonThumbnailPanel * > m_AddonPanels;

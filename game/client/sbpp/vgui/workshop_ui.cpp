@@ -296,7 +296,7 @@ void WorkshopClient::FetchAddons( AddonListCallback cb )
 {
 	DevMsg( "Workshop: Fetching addon list...\n" );
 
-	g_pWebManager->Get( WORKSHOP_API_URL,
+	g_pWebManager->GetAsync( WORKSHOP_API_URL,
 		[this, cb]( const WebResult_t &r )
 		{
 			if ( !r.success )
@@ -364,16 +364,17 @@ void WorkshopClient::DownloadAddon( const Addon &addon, AddonActionCallback cb )
 
 	DevMsg( "Workshop: Downloading %s to %s\n", addon.id.String(), absPath );
 
-	if ( !g_pWebManager->DownloadToFile( addon.downloadUrl.String(), absPath ) )
-	{
-		if ( cb )
-			cb( false, "download failed" );
-		return;
-	}
+	g_pWebManager->DownloadToFileAsync( addon.downloadUrl.String(), absPath,
+		[this, addonId = addon.id, cb]( bool ok, const char *err )
+		{
+			if ( ok )
+				DevMsg( "Workshop: Successfully downloaded %s\n", addonId.String() );
+			else
+				Warning( "Workshop: download failed for %s: %s\n", addonId.String(), err ? err : "(unknown)" );
 
-	DevMsg( "Workshop: Successfully downloaded %s\n", addon.id.String() );
-	if ( cb )
-		cb( true, nullptr );
+			if ( cb )
+				cb( ok, ok ? nullptr : ( err ? err : "download failed" ) );
+		} );
 }
 
 void WorkshopClient::GetInstalledAddonIDs( CUtlVector< CUtlString > &outIDs )
@@ -540,12 +541,12 @@ void CAddonThumbnailPanel::ApplySchemeSettings( IScheme *pScheme )
 	BaseClass::ApplySchemeSettings( pScheme );
 
 	SetBorder( pScheme->GetBorder( "ButtonBorder" ) );
-	SetBgColor( pScheme->GetColor( "ListPanel.BgColor", Color( 40, 40, 40, 255 ) ) );
+	SetBgColor( Color( 180, 180, 180, 255 ) );
 
 	if ( m_pNameLabel )
-		m_pNameLabel->SetFgColor( pScheme->GetColor( "Label.TextColor", Color( 255, 255, 255, 255 ) ) );
+		m_pNameLabel->SetFgColor( Color( 255, 255, 255, 255) );
 	if ( m_pSizeLabel )
-		m_pSizeLabel->SetFgColor( pScheme->GetColor( "Label.DisabledTextColor", Color( 150, 150, 150, 255 ) ) );
+		m_pSizeLabel->SetFgColor( Color( 150, 150, 150, 255 ) );
 }
 
 void CAddonThumbnailPanel::PerformLayout()
@@ -824,12 +825,22 @@ void CBrowsePage::RefreshList()
 	m_AddonPanels.RemoveAll();
 	m_tileRects.RemoveAll();
 
+	VPANEL hSelf = GetVPanel();
+
 	pClient->FetchAddons(
-		[this]( bool success, const CUtlVector< Addon > & )
+		[hSelf]( bool success, const CUtlVector< Addon > & )
 		{
-			if ( success )
-				PopulateGrid();
+			KeyValues *kv = new KeyValues( "AddonsReady" );
+			kv->SetInt( "success", success ? 1 : 0 );
+			vgui::ivgui()->PostMessage( hSelf, kv, NULL );
 		} );
+}
+
+void CBrowsePage::OnAddonsReady( KeyValues *kv )
+{
+	bool success = kv->GetInt( "success" ) != 0;
+	if ( success )
+		PopulateGrid();
 }
 
 void CBrowsePage::PopulateGrid()

@@ -51,41 +51,6 @@ size_t CWebManager::WriteMemoryCallback( void *contents, size_t size, size_t nme
 	return totalSize;
 }
 
-bool CWebManager::DownloadToFileAsync( const char *url, const char *localPath, WebDownloadCallback cb )
-{
-	if ( !url || !*url || !localPath || !*localPath )
-	{
-		if ( cb ) cb( false, localPath );
-		return false;
-	}
-
-	std::string urlStr  = url;
-	std::string pathStr = localPath;
-
-	std::thread( [ this, urlStr, pathStr, cb ]()
-	{
-		bool ok = DownloadToFile( urlStr, pathStr );
-		if ( cb )
-			cb( ok, pathStr.c_str() );
-	} ).detach();
-
-	return true;
-}
-
-size_t CWebManager::WriteFileCallback( void *contents, size_t size, size_t nmemb, void *userp )
-{
-	size_t		 totalSize = size * nmemb;
-	FileHandle_t file = static_cast< FileHandle_t >( userp );
-	if ( !file )
-		return 0;
-
-	int written = g_pFullFileSystem->Write( contents, totalSize, file );
-	if ( written < 0 || static_cast< size_t >( written ) != totalSize )
-		return 0;
-
-	return totalSize;
-}
-
 bool CWebManager::LoadCACertBlob( CURL *curl )
 {
 	FileHandle_t hFile = g_pFullFileSystem->Open( "settings/cacert.pem", "rb", "GAME" );
@@ -335,4 +300,105 @@ bool CWebManager::DownloadToFile( const std::string &url, const std::string &fil
 	}
 
 	return result.success;
+}
+
+size_t CWebManager::WriteFileCallback( void *contents, size_t size, size_t nmemb, void *userp )
+{
+	size_t totalSize = size * nmemb;
+	FileHandle_t file = static_cast< FileHandle_t >( userp );
+	if ( !file )
+		return 0;
+
+	int written = g_pFullFileSystem->Write( contents, totalSize, file );
+	if ( written < 0 || static_cast< size_t >( written ) != totalSize )
+		return 0;
+
+	return totalSize;
+}
+
+bool CWebManager::GetAsync( const std::string &url, RequestCallback callback )
+{
+	if ( url.empty() )
+	{
+		if ( callback )
+		{
+			WebResult_t r = {};
+			r.error = WEB_ERR_INVALID_URL;
+			r.errorMessage = "Empty URL";
+			callback( r );
+		}
+		return false;
+	}
+
+	if ( !g_pThreadPool )
+	{
+		Warning( "GetAsync: g_pThreadPool is null\n" );
+		return Get( url, callback );
+	}
+
+	std::string urlStr = url;
+
+	g_pThreadPool->QueueCall( this, &CWebManager::Get, urlStr, callback );
+
+	return true;
+}
+
+bool CWebManager::PostAsync( const std::string &url, const std::string &jsonBody, RequestCallback callback )
+{
+	if ( url.empty() )
+	{
+		if ( callback )
+		{
+			WebResult_t r = {};
+			r.error = WEB_ERR_INVALID_URL;
+			r.errorMessage = "Empty URL";
+			callback( r );
+		}
+		return false;
+	}
+
+	if ( !g_pThreadPool )
+	{
+		Warning( "PostAsync: g_pThreadPool is null\n" );
+		return Post( url, jsonBody, callback );
+	}
+
+	std::string urlStr  = url;
+	std::string bodyStr = jsonBody;
+
+	g_pThreadPool->QueueCall( this, &CWebManager::Post, urlStr, bodyStr, callback );
+
+	return true;
+}
+
+void CWebManager::DownloadToFileWorker( std::string url, std::string filePath, WebDownloadCallback cb )
+{
+	bool ok = DownloadToFile( url, filePath );
+	if ( cb )
+		cb( ok, filePath.c_str() );
+}
+
+bool CWebManager::DownloadToFileAsync( const char *url, const char *localPath, WebDownloadCallback cb )
+{
+	if ( !url || !*url || !localPath || !*localPath )
+	{
+		if ( cb ) cb( false, localPath );
+		return false;
+	}
+
+	if ( !g_pThreadPool )
+	{
+		Warning( "DownloadToFileAsync: g_pThreadPool is null\n" );
+		bool ok = DownloadToFile( url, localPath );
+		if ( cb )
+			cb( ok, localPath );
+		return ok;
+	}
+
+	std::string urlStr  = url;
+	std::string pathStr = localPath;
+
+	g_pThreadPool->QueueCall( this, &CWebManager::DownloadToFileWorker, urlStr, pathStr, cb );
+
+	return true;
 }

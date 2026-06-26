@@ -5,9 +5,9 @@
 //===========================================================================//
 
 #include "imageextbutton.h"
-#include "vgui/IInput.h"
 #include "vgui/ISurface.h"
 #include "tier1/KeyValues.h"
+#include "vstdlib/jobthread.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -147,6 +147,7 @@ bool ImageExtButton::LoadImage( const char *filename, ImageData &imageData )
 
 void ImageExtButton::SetImage( const char *normalImagePath )
 {
+#if 0
 	if ( !normalImagePath || !*normalImagePath )
 		return;
 
@@ -158,6 +159,9 @@ void ImageExtButton::SetImage( const char *normalImagePath )
 
 	LoadImage( m_normalImagePath, m_normalImage );
 	SetCurrentImage( &m_normalImage );
+#endif
+
+	SetImageAsync( normalImagePath );
 }
 
 int ImageExtButton::CreateOrGetTextureFromImageData( const char *key, unsigned char *data, int width, int height )
@@ -317,4 +321,117 @@ void ImageExtButton::OnCommand( KeyValues *data )
 	{
 		m_pParent->OnCommand( command );
 	}
+}
+
+DecodedImage ImageExtButton::DecodeImageWorker( std::string filename )
+{
+	DecodedImage result;
+
+	CUtlBuffer buf;
+	if ( !g_pFullFileSystem->ReadFile( filename.c_str(), "MOD", buf ) )
+	{
+		Warning( "ImageExtButton: Could not open image file: %s\n", filename.c_str() );
+		return result;
+	}
+
+	int origW = 0, origH = 0, channels = 0;
+	unsigned char *origData = stbi_load_from_memory(
+		reinterpret_cast< unsigned char * >( buf.Base() ), buf.TellPut(),
+		&origW, &origH, &channels, 4 );
+
+	if ( !origData )
+	{
+		Warning( "ImageExtButton: Failed to decode '%s' (%s)\n", filename.c_str(), stbi_failure_reason() );
+		return result;
+	}
+
+	if ( origW <= 0 || origH <= 0 || origW > 4096 || origH > 4096 )
+	{
+		Warning( "ImageExtButton: Invalid dimensions %dx%d for '%s'\n", origW, origH, filename.c_str() );
+		stbi_image_free( origData );
+		return result;
+	}
+
+	int texW, texH;
+	unsigned char *texData = ResizeImage( origData, origW, origH, texW, texH );
+	bool needsFreeing = ( texData != origData );
+
+	unsigned char *owned = (unsigned char *)malloc( (size_t)texW * texH * 4 );
+	if ( owned )
+		memcpy( owned, texData, (size_t)texW * texH * 4 );
+
+	if ( needsFreeing )
+		free( texData );
+	stbi_image_free( origData );
+
+	result.pixels = owned;
+	result.width = texW;
+	result.height = texH;
+	result.ok = ( owned != nullptr );
+	return result;
+}
+
+void ImageExtButton::DecodeImageAndNotify( std::string filename, vgui::VPANEL hSelf )
+{
+	DecodedImage decoded = DecodeImageWorker( filename );
+
+	{
+		AUTO_LOCK( m_pendingDecodeLock );
+		if ( m_pendingDecode.pixels )
+			free( m_pendingDecode.pixels );
+		m_pendingDecode = decoded;
+		m_pendingDecodeValid = true;
+	}
+
+	vgui::ivgui()->PostMessage( hSelf, new KeyValues( "ImageDecoded" ), NULL );
+}
+
+void ImageExtButton::SetImageAsync( const char *normalImagePath )
+{
+	if ( !normalImagePath || !*normalImagePath )
+		return;
+
+	if ( m_normalImage.textureId != -1 && m_normalImagePath[0] )
+		ReleaseTextureByKey( m_normalImagePath );
+
+	m_normalImage = ImageData();
+	Q_strncpy( m_normalImagePath, normalImagePath, sizeof( m_normalImagePath ) );
+
+	if ( !g_pThreadPool )
+	{
+		LoadImage( m_normalImagePath, m_normalImage );
+		SetCurrentImage( &m_normalImage );
+		return;
+	}
+
+	std::string filename = m_normalImagePath;
+	vgui::VPANEL hSelf = GetVPanel();
+
+	g_pThreadPool->QueueCall( this, &ImageExtButton::DecodeImageAndNotify, filename, hSelf );
+}
+
+void ImageExtButton::OnImageDecoded()
+{
+	DecodedImage decoded;
+	{
+		AUTO_LOCK( m_pendingDecodeLock );
+		if ( !m_pendingDecodeValid )
+			return;
+		decoded = m_pendingDecode;
+		m_pendingDecode = DecodedImage();
+		m_pendingDecodeValid = false;
+	}
+
+	if ( decoded.ok )
+	{
+		m_normalImage.textureId = CreateOrGetTextureFromImageData( m_normalImagePath, decoded.pixels, decoded.width, decoded.height );
+		m_normalImage.width = decoded.width;
+		m_normalImage.height = decoded.height;
+		m_normalImage.isValid = ( m_normalImage.textureId != -1 );
+
+		SetCurrentImage( &m_normalImage );
+	}
+
+	if ( decoded.pixels )
+		free( decoded.pixels );
 }
