@@ -6,11 +6,9 @@
 //
 //===========================================================================//
 
-#include "basetypes.h"
 #include "tier0/dbg.h"
 #include "mathlib/mathlib.h"
 #include "bone_setup.h"
-#include <cmath>
 #include <string.h>
 
 #include "collisionutils.h"
