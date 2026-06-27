@@ -349,7 +349,7 @@ void ExtractAnimValue( int frame, mstudioanimvalue_t *panimvalue, float scale, f
 	}
 
 #ifdef SBPP
-	if ( frame <= 0 )
+	if ( frame < 0 )
 	{
 		v1 = 0.0f;
 		return;
