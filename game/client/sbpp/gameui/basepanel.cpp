@@ -594,9 +594,11 @@ CMainMenu::CMainMenu( VPANEL parent ) : Panel( NULL, "MainMenu" )
 	SetProportional( true );
 
 	m_pMenuBar = new CMenuBar( this );
+	m_pMenuBar->SetBounds( 0, GetTall() - 50, GetWide(), 50 );
 
 	// hack: hl2sbpp is default for sandbox mode so its fine
 	m_pLogo = new ImageExtButton( this, "Logo", "materials/gamemode/sandbox.png" );
+	m_pLogo->SetBounds( scheme()->GetProportionalScaledValue( 70 ), scheme()->GetProportionalScaledValue( 25 ), 256, 256 );
 
 	m_pBackground = new CBackgroundPanel( this, "MainMenuBackground" );
 	m_pBackground->SetZPos( -5 );
