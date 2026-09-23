@@ -38,9 +38,9 @@ CHudWatermark::CHudWatermark( const char *pElementName ) : CHudElement( pElement
 	m_pGameName->SetFont( vgui::scheme()->GetIScheme( vgui::scheme()->GetDefaultScheme() )->GetFont( "DefaultSmall", true ) );
 
 	wchar_t discord[256];
-	g_pVGuiLocalize->ConvertANSIToUnicode( "https://discord.gg/3DkET6fqXr", discord, sizeof( discord ) );
+	g_pVGuiLocalize->ConvertANSIToUnicode( "https://discord.gg/half-life-2-sandbox-1518078141216591892", discord, sizeof( discord ) );
 	m_pDiscord = new Label( this, "DiscordLabel", discord );
-	m_pDiscord->SetAlpha( 16 );
+	m_pDiscord->SetAlpha( 12 );
 	m_pDiscord->SetContentAlignment( Label::a_northeast );
 	m_pDiscord->SetFont( vgui::scheme()->GetIScheme( vgui::scheme()->GetDefaultScheme() )->GetFont( "DefaultSmall", true ) );
 }
@@ -53,7 +53,7 @@ void CHudWatermark::Paint()
 	vgui::surface()->GetScreenSize( screenWidth, screenHeight );
 
 	m_pGameName->SetFgColor( Color( 255, 255, 255, 16 ) );
-	m_pDiscord->SetFgColor( Color( 255, 255, 255, 16 ) );
+	m_pDiscord->SetFgColor( Color( 255, 255, 255, 12 ) );
 
 	int gameWidth, gameHeight, discordWidth, discordHeight;
 	m_pGameName->GetContentSize( gameWidth, gameHeight );
