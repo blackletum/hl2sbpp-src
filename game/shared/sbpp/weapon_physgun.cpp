@@ -5,6 +5,8 @@
 //===========================================================================//
 
 #include "cbase.h"
+#include "luamanager.h"
+#include "luasrclib.h"
 #include "beam_shared.h"
 #include "iconvar.h"
 #ifndef CLIENT_DLL
@@ -1932,4 +1934,40 @@ bool CWeaponPhysicsGun::HasAnyAmmo( void )
 bool CWeaponPhysicsGun::Reload( void )
 {
 	return false;
+}
+
+static int CWeaponPhysicsGun_SetColor(lua_State *L)
+{
+	int r = luaL_checkinteger(L, 1);
+    int g = luaL_checkinteger(L, 2);
+    int b = luaL_checkinteger(L, 3);
+	
+	physgun_r->SetValue(r);
+	physgun_g->SetValue(g);
+	physgun_b->SetValue(b);
+	
+	#ifdef GAME_DLL
+	UpdatePhysgunColors();
+
+	// Update the object if the weapon is switched on.
+	if ( m_active )
+	{
+		UpdateObject();
+	}
+    #endif
+}
+
+static const luaL_Reg CWeaponPhysicsGunmeta[] = {
+  {"SetColor", CWeaponPhysicsGun_SetColor},
+  {NULL, NULL}
+};
+
+
+/*
+** Open CBaseAnimating object
+*/
+LUALIB_API int luaopen_CWeaponPhysicsGun (lua_State *L) {
+  luaL_newmetatable(L, LUA_BASEANIMATINGLIBNAME);
+  luaL_register(L, NULL, CWeaponPhysicsGunmeta);
+  return 1;
 }
